@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>动起来</title>
+    <script src="script/three.js"></script>
+
+    <script>
+
+        var renderer;
+        function initThree() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+
+            if (width == 0 || height == 0) { // eslint-disable-line
+            {
+                var msg = "Width :" + width + " Height :" + height;
+                alert(msg);
+                width = 800;
+                height = 600;
+            }
+
+            renderer.setSize(width, height);
+            document.body.appendChild(renderer.domElement);
+            renderer.setClearColor(0xcccccc, 1.0);
+        }
+
+        var camera;
+        function initCamera() {
+            camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+            camera.position.x = 0;
+            camera.position.y = 0;
+            camera.position.z = 600;
+            camera.up.x = 0;
+            camera.up.y = 1;
+            camera.up.z = 0;
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+            });
+        }
+
+        var scene;
+        function initScene() {
+            scene = new THREE.Scene();
+        }
+
+        var light;
+        function initLight() {
+            light = new THREE.AmbientLight(0xFF0000);
+            light.position.set(100, 100, 200);
+            scene.add(light);
+            light = new THREE.PointLight(0x00FF00);
+            light.position.set(0, 0, 300);
+            scene.add(light);
+        }
+
+        var cube;
+        var mesh;
+        function initObject() {
+            var geometry = new THREE.CylinderGeometry(100, 150, 400);
+            var material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+            mesh = new THREE.Mesh(geometry, material);
+            mesh.position = new THREE.Vector3(0, 0, 0);
+            scene.add(mesh);
+        }
+
+        function threeStart() {
+            initThree();
+            initCamera();
+            initScene();
+            initLight();
+            initObject();
+            animation();
+        }
+
+        function animation() {
+            // 物体动起来
+            mesh.position.x -= 1;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animation);
+        }
+
+    </script>
+</head>
+<body onload="threeStart();">
+</body>
+</html>

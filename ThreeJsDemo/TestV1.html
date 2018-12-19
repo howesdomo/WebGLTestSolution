@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script>
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        var container = document.createElement('div');
+        document.body.appendChild(container);
+
+        var webglcanvas = document.createElement('canvas');
+        container.appendChild(webglcanvas);
+
+        // 和html一样，需要先创建一个canvas元素，并获得其webgl上下文：
+        var gl = webglcanvas.getContext("experimental-webgl");
+
+        function updateFrame() {
+            gl.viewport(0, 0, width, height);
+            gl.clearColor(1, 0.4, 0.3, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            setTimeout(
+                function () { updateFrame(); },
+                20);
+        }
+
+        setTimeout(
+            function () {
+                updateFrame();
+            },
+            20);
+    </script>
+</body>
+</html>
