@@ -108,7 +108,7 @@
             var lightBase = new THREE.AmbientLight(0x222222); // 环境光
             scene.add(lightBase);
             // 环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光是一种无处不在的光。
-            // 环境光源放出的光线被认为来自任何方向。因此，当你仅为场景指定环境光时，所有的物体无论法向量如何，都将表现为同样的明暗程度。 （这是因为，反射光可以从各个方向进入您的眼睛）           
+            // 环境光源放出的光线被认为来自任何方向。因此，当你仅为场景指定环境光时，所有的物体无论法向量如何，都将表现为同样的明暗程度。 （这是因为，反射光可以从各个方向进入您的眼睛）
 
             var light = new THREE.DirectionalLight(0xffffff);
             light.position.set(1, 1, 1);
@@ -120,6 +120,44 @@
         };
 
         var initObjects = function () {
+            initObjects_Floor();
+            initObjects_Boxes();
+            initObjects_Random();
+        };
+
+        var initObjects_Floor = function () {
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3(-150, 0, 0));
+            geometry.vertices.push(new THREE.Vector3(150, 0, 0));
+
+            for (var i = 0; i <= 30; i++) {
+                // 横线
+                var lineX = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
+                lineX.position.z = i * 10 - 150;
+                scene.add(lineX);
+
+                // 竖线
+                var lineZ = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
+                lineZ.position.x = i * 10 - 150;
+                lineZ.rotation.y = 90 * Math.PI / 180;
+                scene.add(lineZ);
+            }
+        };
+
+        var initObjects_Boxes = function () {
+            var g = new THREE.CubeGeometry(4 * 10, 5 * 10, 5 * 10);
+            var m = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                wireframe: false // wireframe 空心材质
+            });
+
+            cube = new THREE.Mesh(g, m);
+            cube.position = new THREE.Vector3(0, 2000, 0);
+
+            scene.add(cube);
+        };
+
+        var initObjects_Random = function () {
 
             var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
             var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
@@ -135,8 +173,8 @@
                 scene.add(mesh);
 
             }
-
         };
+
 
         var animation = function () {
             renderer.render(scene, camera);
