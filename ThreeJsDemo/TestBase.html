@@ -16,6 +16,7 @@
 
     <!-- 核心js -->
     <script src="script/three.js"></script>
+    <script src="script/WebGL.js"></script>
     <!-- 鼠标控制Camera -->
     <script src="script/controls/OrbitControls.js"></script>
     <!-- 性能监控器 -->
@@ -27,6 +28,11 @@
         var s_Controls_MaxDistance = 500;
 
         var threeStart = function () {
+            if (WEBGL.isWebGLAvailable() === false) {
+                alert("浏览器支持WebGL:" + WEBGL.isWebGLAvailable());
+                return;
+            }
+
             initThree();
             initScene();
             initCamera();

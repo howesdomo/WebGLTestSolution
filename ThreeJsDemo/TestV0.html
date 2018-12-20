@@ -16,6 +16,7 @@
 
     <!-- 核心js -->
     <script src="script/three.js"></script>
+    <script src="script/WebGL.js"></script>
     <!-- 鼠标控制Camera -->
     <script src="script/controls/OrbitControls.js"></script>
     <!-- 性能监控器 -->
@@ -27,6 +28,11 @@
         var s_Controls_MaxDistance = 500;
 
         var threeStart = function () {
+            if (WEBGL.isWebGLAvailable() === false) {
+                alert("浏览器支持WebGL:" + WEBGL.isWebGLAvailable());
+                return;
+            }
+
             initThree();
             initScene();
             initCamera();
@@ -117,12 +123,16 @@
             var light2 = new THREE.DirectionalLight(0x002288);
             light2.position.set(- 1, - 1, - 1);
             scene.add(light2);
+
+            var light3 = new THREE.DirectionalLight(0x442288);
+            light3.position.set(- 1, 0, 1);
+            scene.add(light3);
         };
 
         var initObjects = function () {
             initObjects_Floor();
-            initObjects_Boxes();
-            initObjects_Random();
+            initObjects_Boxes1();
+            initObjects_Boxes2();
         };
 
         var initObjects_Floor = function () {
@@ -134,44 +144,55 @@
                 // 横线
                 var lineX = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
                 lineX.position.z = i * 10 - 150;
+                lineX.position.y = -25;
                 scene.add(lineX);
 
                 // 竖线
                 var lineZ = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
                 lineZ.position.x = i * 10 - 150;
+                lineZ.position.y = -25;
                 lineZ.rotation.y = 90 * Math.PI / 180;
                 scene.add(lineZ);
             }
         };
 
-        var initObjects_Boxes = function () {
-            var g = new THREE.CubeGeometry(4 * 10, 5 * 10, 5 * 10);
-            var m = new THREE.MeshBasicMaterial({
-                color: 0xff0000,
-                wireframe: false // wireframe 空心材质
-            });
+        var initObjects_Boxes1 = function () {
 
-            cube = new THREE.Mesh(g, m);
-            cube.position = new THREE.Vector3(0, 2000, 0);
+            for (var i = 0; i < 15; i++) {
+                var g = new THREE.CubeGeometry(1 * 10, 5 * 10, 5 * 10);
+                var m = new THREE.MeshPhongMaterial({
+                    color: 0xff0000,
+                    wireframe: false // wireframe 空心材质
+                });
 
-            scene.add(cube);
+                cube = new THREE.Mesh(g, m);
+                cube.position.x = Math.random() * 300 - 150;
+                cube.position.y = 0;
+                cube.position.z = Math.random() * 300 - 150;
+                cube.updateMatrix();
+
+                scene.add(cube);
+            }
         };
 
-        var initObjects_Random = function () {
 
-            var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
-            var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
 
-            for (var i = 0; i < 500; i++) {
+        var initObjects_Boxes2 = function () {
 
-                var mesh = new THREE.Mesh(geometry, material);
-                mesh.position.x = Math.random() * 1600 - 800;
-                mesh.position.y = 0;
-                mesh.position.z = Math.random() * 1600 - 800;
-                mesh.updateMatrix();
-                mesh.matrixAutoUpdate = false;
-                scene.add(mesh);
+            for (var i = 0; i < 15; i++) {
+                var g = new THREE.CubeGeometry(5 * 10, 5 * 10, 1 * 10);
+                var m = new THREE.MeshPhongMaterial({
+                    color: 0xff0000,
+                    wireframe: false // wireframe 空心材质
+                });
 
+                cube = new THREE.Mesh(g, m);
+                cube.position.x = Math.random() * 300 - 150;
+                cube.position.y = 0;
+                cube.position.z = Math.random() * 300 - 150;
+                cube.updateMatrix();
+
+                scene.add(cube);
             }
         };
 
