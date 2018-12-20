@@ -21,6 +21,7 @@
             initThree();
             initScene();
             initCamera();
+            initObject();
 
             animation();
         }
@@ -43,7 +44,7 @@
                 height = 600;
             }
 
-            renderer.setSize(width, height);
+            renderer.setSize(400, 300);
             document.body.appendChild(renderer.domElement);
             renderer.setClearColor(0xcccccc, 1.0);
 
@@ -63,8 +64,36 @@
 
         var camera;
         function initCamera() {
+            camera = new THREE.OrthographicCamera(-2, 2, 1.5, -1.5, 1, 10);
+            // camera.position.set(0, 0, 5);
+            // scene.add(camera);
+            camera.position.set(-4, 3, 5);
 
+            // 不过一定要注意，lookAt函数接受的是一个THREE.Vector3的实例，因此千万别写成camera.lookAt(0, 0, 0)，
+            // 否则非但不能得到理想的效果，而且不会报错，使你很难找到问题所在。
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
         }
+
+        var cube;
+        var initObject = function () {
+            var g = new THREE.CubeGeometry(1, 2, 2);
+            var m = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                wireframe: true // wireframe 空心材质
+            });
+
+            cube = new THREE.Mesh(g, m);
+            cube.position = new THREE.Vector3(0, 0, 0);
+            
+            //cube = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1),
+            //    new THREE.MeshBasicMaterial({
+            //        color: 0xff0000,
+            //        wireframe: true // wireframe 空心材质
+            //    })
+            //);
+
+            scene.add(cube);
+        };
 
         function animation() {
             renderer.render(scene, camera);

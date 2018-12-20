@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Three框架</title>
-    <script src="script/three.js" data-ke-src="js/Three.js"></script>
+    <script src="script/three.js" data-ke-src="js/three_r73.js"></script>
     <style type="text/css">
         * {
             margin: 0px;
@@ -83,7 +83,9 @@
             geometry.vertices.push(p2);
             geometry.colors.push(color1, color2);
 
-            var line = new THREE.Line(geometry, material, THREE.LinePieces);
+            // var line = new THREE.Line(geometry, material, THREE.LinePieces); // r73 
+            // var line = new THREE.Line(geometry, material, THREE.LineSegments); // r99
+            var line = new THREE.LineSegments(geometry, material);
             scene.add(line);
         }
 

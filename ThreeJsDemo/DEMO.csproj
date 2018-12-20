@@ -66,10 +66,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Demo.html" />
+    <Content Include="script\controls\OrbitControls.js" />
     <Content Include="script\ReadMe.txt" />
     <Content Include="script\Stats.js" />
     <Content Include="script\three.js" />
     <Content Include="script\Tween.js" />
+    <Content Include="script\WebGL.js" />
     <Content Include="TestBase.html" />
     <Content Include="TestV3.html" />
     <Content Include="TestV1.html" />
@@ -79,8 +82,10 @@
     <Content Include="TestV5_2.html" />
     <Content Include="TestV5_3_Stats.html" />
     <Content Include="TestV5_4_Tween.html" />
+    <Content Include="TestV6_.html" />
     <Content Include="TestV6_OrthographicCamera.html" />
     <Content Include="TestV6_PerspectiveCamera.html" />
+    <Content Include="TestV7_OrbitControls.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

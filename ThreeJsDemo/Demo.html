@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DEMO</title>
+    <style>
+        * {
+            margin: 0px;
+        }
+    </style>
+    <script src="script/three.js"></script>
+    <script src="script/Stats.js"></script>
+    <script src="script/Tween.js"></script>
+
+    <script>
+
+        var renderer;
+        var stats;
+        function initThree() {
+            // 定义渲染器
+            width = window.innerWidth;
+            height = window.innerHeight;
+
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+
+            if (width == 0 || height == 0) { // eslint-disable-line
+                var msg = "Width :" + width + " Height :" + height;
+                alert(msg);
+                width = 800;
+                height = 600;
+            }
+
+            renderer.setSize(width, height);
+            document.body.appendChild(renderer.domElement);
+            renderer.setClearColor(0xcccccc, 1.0);
+
+            // 定义性能监视器Stats
+            stats = new Stats();
+            stats.domElement.style.position = 'absolute';
+            stats.domElement.style.left = '0px';
+            stats.domElement.style.top = '0px';
+
+            document.body.appendChild(stats.domElement);
+        }
+
+
+
+        var camera;
+        var initCamera = function () {
+            // 这是视角为45度的情况，也就是眼睛睁开45度的情况。人类的正常视角是120度左右，但是要集中注意力看清楚东西，那么眼睛的视角在30-40度比较好。
+            camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000); // fov, aspect, near, far
+            camera.position.x = 0;
+            camera.position.y = 100; // ** 摄影机的高度位置 **
+            camera.position.z = 600;
+            camera.up.x = 0;
+            camera.up.y = 1;
+            camera.up.z = 0;
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+            });
+        };
+
+        var scene;
+        function initScene() {
+            scene = new THREE.Scene();
+        }
+
+        var light;
+        function initLight() {
+            light = new THREE.AmbientLight(0xFF6556);
+            light.position.set(100, 100, 200);
+            scene.add(light);
+            light = new THREE.PointLight(0x00FF00);
+            light.position.set(0, 0, 300);
+            scene.add(light);
+        }
+
+        function initObject_Floor() {
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(new THREE.Vector3(-150, 0, 0));
+            geometry.vertices.push(new THREE.Vector3(150, 0, 0));
+
+            for (var i = 0; i <= 30; i++) {
+                // 横线
+                var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
+                line.position.z = i * 10 - 150;
+                scene.add(line);
+
+                // 竖线
+                var line2 = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
+                line2.position.x = i * 10 - 150;
+                line2.rotation.y = 90 * Math.PI / 180;
+                scene.add(line2);
+            }
+        }
+
+        function initObject_Cubes() {
+
+            var g = new THREE.CubeGeometry(4 * 10, 1 * 10, 5 * 10);
+            var m = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                wireframe: false // wireframe 空心材质
+            });
+
+            cube = new THREE.Mesh(g, m);
+            cube.position = new THREE.Vector3(-230, -230, 0);
+
+            scene.add(cube);
+        }
+
+        function threeStart() {
+            initThree();
+            initCamera();
+            initScene();
+            initLight();
+            initObject_Floor();
+            //initObject_Cubes();
+            animation();
+        }
+
+        var animation = function () {
+            changeFov();
+            renderer.render(scene, camera);
+            requestAnimationFrame(animation);
+            stats.update();
+        };
+
+        var setCameraFov = function (argsFov) {
+            camera.fov = argsFov;
+            camera.updateProjectionMatrix();
+        };
+
+        var changeFov = function () {
+            var txtFov = document.getElementById("txtFov").value;
+            var val = parseFloat(txtFov);
+            setCameraFov(val);
+        };
+
+    </script>
+</head>
+<body onload="threeStart();">
+    <div style="width: 200px; margin-left:100px;">
+        Fov(0到180的值):<input type="text" value="45" id="txtFov" />
+    </div>
+</body>
+</html>
