@@ -38,6 +38,7 @@
             initCamera();
             initControls();
             initLights();
+            initGrid();
 
             initObjects();
 
@@ -91,8 +92,8 @@
 
         var camera;
         var initCamera = function () {
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.set(400, 200, 0);
+            camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(200, 200, 200);
         };
 
         var controls;
@@ -111,28 +112,46 @@
         };
 
         var initLights = function () {
-            var lightBase = new THREE.AmbientLight(0x222222); // 环境光
+            var lightBase = new THREE.AmbientLight(0x000000); // 环境光
             scene.add(lightBase);
             // 环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光是一种无处不在的光。
             // 环境光源放出的光线被认为来自任何方向。因此，当你仅为场景指定环境光时，所有的物体无论法向量如何，都将表现为同样的明暗程度。 （这是因为，反射光可以从各个方向进入您的眼睛）
 
-            var light = new THREE.DirectionalLight(0xffffff);
-            light.position.set(1, 1, 1);
-            scene.add(light);
+            //var light = new THREE.DirectionalLight(0xffffff);
+            //light.position.set(1, 1, 1);
+            //scene.add(light);
 
-            var light2 = new THREE.DirectionalLight(0x002288);
-            light2.position.set(- 1, - 1, - 1);
-            scene.add(light2);
+            //var light2 = new THREE.DirectionalLight(0x002288);
+            //light2.position.set(- 1, - 1, - 1);
+            //scene.add(light2);
 
-            var light3 = new THREE.DirectionalLight(0x442288);
-            light3.position.set(- 1, 0, 1);
-            scene.add(light3);
+            //var light3 = new THREE.DirectionalLight(0x442288);
+            //light3.position.set(- 1, 0, 1);
+            //scene.add(light3);
+        };
+
+
+        var initGrid = function () {
+            var size = 10000;
+
+            // 生成辅助线
+            var helper = new THREE.GridHelper(
+                size // size - 边长
+                , 1000 // divisions - 边长分为多少小格
+                // , 0x0000ff // color1 - 暂不使用, 已用 AxisHelper 标记 x,y,z的方向
+                // , 0x808080 // color2 - 暂不使用, 已用 AxisHelper 标记 x,y,z的方向
+            );
+            scene.add(helper);
+
+            var axisHelper = new THREE.AxisHelper(size); // X轴红色, Y轴绿色, Z轴蓝色
+            scene.add(axisHelper);
         };
 
         var initObjects = function () {
             initObjects_Floor();
-            initObjects_Boxes1();
-            initObjects_Boxes2();
+            //initObjects_Boxes1();
+            //initObjects_Boxes2();
+            initObjects_One();
         };
 
         var initObjects_Floor = function () {
@@ -142,15 +161,15 @@
 
             for (var i = 0; i <= 30; i++) {
                 // 横线
-                var lineX = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
+                var lineX = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xb97a57, opacity: 1 }));
                 lineX.position.z = i * 10 - 150;
-                lineX.position.y = -25;
+                lineX.position.y = 0;
                 scene.add(lineX);
 
                 // 竖线
-                var lineZ = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.2 }));
+                var lineZ = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xb97a57, opacity: 1 }));
                 lineZ.position.x = i * 10 - 150;
-                lineZ.position.y = -25;
+                lineZ.position.y = 0;
                 lineZ.rotation.y = 90 * Math.PI / 180;
                 scene.add(lineZ);
             }
@@ -166,16 +185,14 @@
                 });
 
                 cube = new THREE.Mesh(g, m);
-                cube.position.x = Math.random() * 300 - 150;
-                cube.position.y = 0;
-                cube.position.z = Math.random() * 300 - 150;
+                cube.position.x = parseInt(Math.random() * 10) * 30 - 150;
+                cube.position.y = 25;
+                cube.position.z = parseInt(Math.random() * 10) * 30 - 150;
                 cube.updateMatrix();
 
                 scene.add(cube);
             }
         };
-
-
 
         var initObjects_Boxes2 = function () {
 
@@ -187,13 +204,29 @@
                 });
 
                 cube = new THREE.Mesh(g, m);
-                cube.position.x = Math.random() * 300 - 150;
-                cube.position.y = 0;
-                cube.position.z = Math.random() * 300 - 150;
+                cube.position.x = parseInt(Math.random() * 10) * 30 - 150;
+                cube.position.y = 25;
+                cube.position.z = parseInt(Math.random() * 10) * 30 - 150;
                 cube.updateMatrix();
 
                 scene.add(cube);
             }
+        };
+
+        var initObjects_One = function () {
+            var g = new THREE.CubeGeometry(1 * 10, 5 * 10, 5 * 10);
+            var m = new THREE.MeshPhongMaterial({
+                color: 0xff0000,
+                wireframe: true // wireframe 空心材质
+            });
+
+            cube = new THREE.Mesh(g, m);
+            cube.position.x = 0;
+            cube.position.y = 0;
+            cube.position.z = 0;
+            cube.updateMatrix();
+
+            scene.add(cube);
         };
 
 

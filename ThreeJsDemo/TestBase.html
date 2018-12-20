@@ -38,6 +38,7 @@
             initCamera();
             initControls();
             initLights();
+            initGrid();
 
             initObjects();
 
@@ -91,8 +92,8 @@
 
         var camera;
         var initCamera = function () {
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.set(400, 200, 0);
+            camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(200, 200, 200);
         };
 
         var controls;
@@ -125,6 +126,22 @@
             scene.add(light2);
         };
 
+        var initGrid = function () {
+            var size = 10000;
+
+            // 生成辅助线
+            var helper = new THREE.GridHelper(
+                size // size - 边长
+                , 1000 // divisions - 边长分为多少小格
+                // , 0x0000ff // color1 - 暂不使用, 已用 AxisHelper 标记 x,y,z的方向
+                // , 0x808080 // color2 - 暂不使用, 已用 AxisHelper 标记 x,y,z的方向
+            );
+            scene.add(helper);
+
+            var axisHelper = new THREE.AxisHelper(size); // X轴红色, Y轴绿色, Z轴蓝色
+            scene.add(axisHelper);
+        };
+
         var initObjects = function () {
 
             var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
@@ -142,6 +159,16 @@
 
             }
 
+        };
+
+        var initObjects_Grid = function () {
+            var helper = new THREE.GridHelper(
+                1000, // size - 边长
+                1000, // divisions - 边长分为多少小格
+                0x0000ff, // color1
+                0x808080 // color2
+            );
+            scene.add(helper);
         };
 
         var animation = function () {
