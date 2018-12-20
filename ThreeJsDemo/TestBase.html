@@ -138,8 +138,8 @@
             );
             scene.add(helper);
 
-            var axisHelper = new THREE.AxisHelper(size); // X轴红色, Y轴绿色, Z轴蓝色
-            scene.add(axisHelper);
+            var axesHelper = new THREE.AxesHelper(size); // X轴红色, Y轴绿色, Z轴蓝色
+            scene.add(axesHelper);
         };
 
         var initObjects = function () {
@@ -159,16 +159,6 @@
 
             }
 
-        };
-
-        var initObjects_Grid = function () {
-            var helper = new THREE.GridHelper(
-                1000, // size - 边长
-                1000, // divisions - 边长分为多少小格
-                0x0000ff, // color1
-                0x808080 // color2
-            );
-            scene.add(helper);
         };
 
         var animation = function () {

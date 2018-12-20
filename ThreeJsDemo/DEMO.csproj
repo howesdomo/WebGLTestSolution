@@ -87,6 +87,11 @@
     <Content Include="TestV6_OrthographicCamera.html" />
     <Content Include="TestV6_PerspectiveCamera.html" />
     <Content Include="TestV7_OrbitControls.html" />
+    <Content Include="TestV8_Texture_2.html" />
+    <Content Include="TestV8_Texture.html" />
+    <Content Include="textures\LightGreen.jpg" />
+    <Content Include="textures\Pink.jpg" />
+    <Content Include="textures\TestV8_textures.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
