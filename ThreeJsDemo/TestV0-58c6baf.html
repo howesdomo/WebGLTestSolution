@@ -93,9 +93,7 @@
         var camera;
         var initCamera = function () {
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.set(300, 300, 300);
-
-            camera.lookAt(300, 300, 300);
+            camera.position.set(200, 200, 200);
         };
 
         var controls;
@@ -114,7 +112,7 @@
         };
 
         var initLights = function () {
-            var lightBase = new THREE.AmbientLight(0xffffff); // 环境光
+            var lightBase = new THREE.AmbientLight(0x000000); // 环境光
             scene.add(lightBase);
             // 环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光是一种无处不在的光。
             // 环境光源放出的光线被认为来自任何方向。因此，当你仅为场景指定环境光时，所有的物体无论法向量如何，都将表现为同样的明暗程度。 （这是因为，反射光可以从各个方向进入您的眼睛）
@@ -152,8 +150,9 @@
         var textureLoader = new THREE.TextureLoader();
         var initObjects = function () {
             initObjects_Floor();
-            initObjects_Step1();
-            initObjects_Locations();
+            //initObjects_Boxes1();
+            //initObjects_Boxes2();
+            initObjects_One();
         };
 
         var initObjects_Floor = function () {
@@ -179,139 +178,129 @@
             }
         };
 
-        var initObjects_Step1 = function () {
+        var initObjects_Boxes1 = function () {
 
-            for (var i = 0; i < 2; i++) {
-                geometry = new THREE.CubeGeometry(10, 6 * 10, 6 * 10);
-                texture = textureLoader.load(// load a resource
-                    'textures/LightGreen.png' // resource URL
-                    , undefined // onLoad callback
-                    , undefined // onProgress callback currently not supported
-                    , function (err) { // onError callback
-                        console.error('textureLoader.load has error:' + ex.msg);
-                    }
-                );
-                material = new THREE.MeshBasicMaterial({ map: texture });
-                mesh = new THREE.Mesh(geometry, material);
-                edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-                edges.position.x = 15 + i * 10;
-                edges.position.y = 30;
-                edges.position.z = 30 + 20;
-                scene.add(edges);
+            for (var i = 0; i < 15; i++) {
+                var g = new THREE.CubeGeometry(1 * 10, 5 * 10, 5 * 10);
+                var m = new THREE.MeshPhongMaterial({
+                    color: 0xff0000,
+                    wireframe: false // wireframe 空心材质
+                });
+
+                cube = new THREE.Mesh(g, m);
+                cube.position.x = parseInt(Math.random() * 10) * 30 - 150;
+                cube.position.y = 25;
+                cube.position.z = parseInt(Math.random() * 10) * 30 - 150;
+                cube.updateMatrix();
+
+                scene.add(cube);
             }
-
-
-
-            geometry = new THREE.CubeGeometry(10, 6 * 10, 6 * 10);
-            texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
-                , undefined // onLoad callback
-                , undefined // onProgress callback currently not supported
-                , function (err) { // onError callback
-                    console.error('textureLoader.load has error:' + ex.msg);
-                }
-            );
-            material = new THREE.MeshBasicMaterial({ map: texture });
-            mesh = new THREE.Mesh(geometry, material);
-            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-            edges.position.x = 15 + 9 * 10;
-            edges.position.y = 30;
-            edges.position.z = 30 + 20;
-            scene.add(edges);
-
-            geometry = new THREE.CubeGeometry(10, 6 * 10, 6 * 10);
-            texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
-                , undefined // onLoad callback
-                , undefined // onProgress callback currently not supported
-                , function (err) { // onError callback
-                    console.error('textureLoader.load has error:' + ex.msg);
-                }
-            );
-            material = new THREE.MeshBasicMaterial({ map: texture });
-            mesh = new THREE.Mesh(geometry, material);
-            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-            edges.position.x = 15 + 13 * 10;
-            edges.position.y = 30;
-            edges.position.z = 30 + 20;
-            scene.add(edges);
         };
 
-        var initObjects_Locations = function () {
+        var initObjects_Boxes2 = function () {
+
+            for (var i = 0; i < 15; i++) {
+                var g = new THREE.CubeGeometry(5 * 10, 5 * 10, 1 * 10);
+                var m = new THREE.MeshPhongMaterial({
+                    color: 0xff0000,
+                    wireframe: false // wireframe 空心材质
+                });
+
+                cube = new THREE.Mesh(g, m);
+                cube.position.x = parseInt(Math.random() * 10) * 30 - 150;
+                cube.position.y = 25;
+                cube.position.z = parseInt(Math.random() * 10) * 30 - 150;
+                cube.updateMatrix();
+
+                scene.add(cube);
+            }
+        };
+
+        var initObjects_One = function () {
 
             var geometry, texture, material, mesh, edges;
 
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0x90EE90
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.4
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
-
-                    mesh.position.x = 15;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/LightGreen.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
                 }
-            }
+            );
 
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0xFFC0CB
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.4
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
+            scene.add(edges);
 
-                    mesh.position.x = 25;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
+
+            mesh.position.x = 15;
+            mesh.position.y = 5;
+            mesh.position.z = 15;
+
+
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/White.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
                 }
-            }
+            );
 
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0xFFC0CB
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.4
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
 
-                    mesh.position.x = 25 + 80;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
+            mesh.position.x = 15;
+            mesh.position.y = 15;
+            mesh.position.z = 15;
+
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/White.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
                 }
-            }
+            );
 
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0x90EE90
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.7
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
 
-                    mesh.position.x = 25 + 120;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
+            mesh.position.x = 15;
+            mesh.position.y = 5;
+            mesh.position.z = 25;
+
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/Pink.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
                 }
-            }
+            );
+
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            mesh.position.x = 15;
+            mesh.position.y = 15;
+            mesh.position.z = 25;
+
+        };
+
+        var initObjects_B = function () {
+            var geometry = new THREE.EdgesGeometry(10, 10, 10);
+            scene.add(mesh);
         };
 
         var animation = function () {

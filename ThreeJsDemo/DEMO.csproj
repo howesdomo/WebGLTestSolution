@@ -74,6 +74,7 @@
     <Content Include="script\Tween.js" />
     <Content Include="script\WebGL.js" />
     <Content Include="TestBase.html" />
+    <Content Include="TestV0-58c6baf.html" />
     <Content Include="TestV0.html" />
     <Content Include="TestV0_R1.html" />
     <Content Include="TestV3.html" />
@@ -91,10 +92,10 @@
     <Content Include="TestV8_Texture_2.html" />
     <Content Include="TestV8_Texture.html" />
     <Content Include="TestV9_Geometry_EdgesGeometry.html" />
-    <Content Include="textures\LightGreen.jpg" />
-    <Content Include="textures\Pink.jpg" />
+    <Content Include="textures\LightGreen.png" />
+    <Content Include="textures\Pink.png" />
     <Content Include="textures\TestV8_textures.png" />
-    <Content Include="textures\White.jpg" />
+    <Content Include="textures\White.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
