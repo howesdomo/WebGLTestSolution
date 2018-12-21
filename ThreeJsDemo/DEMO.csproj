@@ -92,6 +92,7 @@
     <Content Include="TestV8_Texture_2.html" />
     <Content Include="TestV8_Texture.html" />
     <Content Include="TestV9_Geometry_EdgesGeometry.html" />
+    <Content Include="TestV9_Geometry_Line.html" />
     <Content Include="textures\LightGreen.png" />
     <Content Include="textures\Pink.png" />
     <Content Include="textures\TestV8_textures.png" />

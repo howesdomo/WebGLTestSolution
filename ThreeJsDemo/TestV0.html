@@ -93,9 +93,9 @@
         var camera;
         var initCamera = function () {
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
-            camera.position.set(300, 300, 300);
+            camera.position.set(-100, 100, 0);
 
-            camera.lookAt(300, 300, 300);
+            camera.lookAt(150, 0, 150);
         };
 
         var controls;
@@ -152,8 +152,10 @@
         var textureLoader = new THREE.TextureLoader();
         var initObjects = function () {
             initObjects_Floor();
-            initObjects_Step1();
-            initObjects_Locations();
+            //initObjects_Step1();
+            //initObjects_Locations();
+
+            initShelves();
         };
 
         var initObjects_Floor = function () {
@@ -235,6 +237,85 @@
             edges.position.y = 30;
             edges.position.z = 30 + 20;
             scene.add(edges);
+
+            var dashSize = 0.5;
+            var gapSize = 0.5;
+
+            var lineGeometry = new THREE.Geometry();//生成几何体
+            lineGeometry.vertices.push(new THREE.Vector3(10, 10, 20));//线段的两个顶点
+            lineGeometry.vertices.push(new THREE.Vector3(10, 10, 80));
+
+            var line = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
+                color: 0xffffff, //线段的颜色
+                dashSize: dashSize, //短划线的大小
+                gapSize: gapSize //短划线之间的距离
+            }));
+            line.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
+            scene.add(line);
+
+
+        };
+
+        var initShelves = function () {
+            var shelf = new Object();
+            shelf.id = "S01";
+            shelf.rowCount = 6;
+            shelf.columnCount = 6;
+            shelf.floorCount = 6;
+
+            shelf.x = 11; // 在哪个方格 x
+            shelf.z = 11; // 在哪个方格 z
+
+            initShelf(shelf);
+        };
+
+        var initShelf = function (shelf) {
+            geometry = new THREE.CubeGeometry(shelf.rowCount * 10, shelf.floorCount * 10, shelf.columnCount * 10);
+            material = new THREE.MeshBasicMaterial();
+            mesh = new THREE.Mesh(geometry, material);
+            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
+            
+            edges.position.x = shelf.rowCount * 10 / 2 + shelf.x * 10;
+            edges.position.y = shelf.floorCount * 10 / 2;
+            edges.position.z = shelf.columnCount * 10 / 2 + shelf.z * 10;
+
+            scene.add(edges);
+
+            // 绘制虚线
+            // 5个面
+            var dashSize = 0.5;
+            var gapSize = 0.5;
+
+            // left
+            for (var i = 1; i < shelf.rowCount; i++) {
+
+                var lineGeometry = new THREE.Geometry();//生成几何体
+                var xStart = shelf.x * 10;
+                var xEnd = shelf.x * 10;
+
+                var yStart = i * 10;
+                var yEnd = i * 10;
+
+                var zStart = shelf.z * 10;
+                var zEnd = shelf.z * 10 + shelf.columnCount * 10;
+
+                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
+                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
+
+                var line = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
+                    color: 0xffffff, //线段的颜色
+                    dashSize: dashSize, //短划线的大小
+                    gapSize: gapSize //短划线之间的距离
+                }));
+                line.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
+                scene.add(line);
+            }
+
+            // right
+            // top
+            // - bottom -
+            // near
+            // far
         };
 
         var initObjects_Locations = function () {
