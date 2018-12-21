@@ -153,7 +153,7 @@
             //initObjects_Boxes1();
             //initObjects_Boxes2();
             initObjects_One();
-            initObjects_B();
+            // initObjects_B();
         };
 
         var initObjects_Floor = function () {
@@ -234,9 +234,6 @@
             material = new THREE.MeshBasicMaterial({ map: texture, transparent: true});
             mesh = new THREE.Mesh(geometry, material);
             scene.add(mesh);
-            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-            scene.add(edges);
-
 
             mesh.position.x = 15;
             mesh.position.y = 5;
@@ -245,7 +242,7 @@
 
             geometry = new THREE.CubeGeometry(10, 10, 10);
             texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
+                'textures/White.png' // resource URL
                 , undefined // onLoad callback
                 , undefined // onProgress callback currently not supported
                 , function (err) { // onError callback
@@ -263,7 +260,7 @@
 
             geometry = new THREE.CubeGeometry(10, 10, 10);
             texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
+                'textures/White.png' // resource URL
                 , undefined // onLoad callback
                 , undefined // onProgress callback currently not supported
                 , function (err) { // onError callback
@@ -281,7 +278,7 @@
 
             geometry = new THREE.CubeGeometry(10, 10, 10);
             texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
+                'textures/Pink.png' // resource URL
                 , undefined // onLoad callback
                 , undefined // onProgress callback currently not supported
                 , function (err) { // onError callback
@@ -297,20 +294,6 @@
             mesh.position.y = 15;
             mesh.position.z = 25;
 
-        };
-
-        var initObjects_B = function () {
-            var material = new THREE.MeshPhongMaterial();
-            var edgesMtl = new THREE.LineBasicMaterial({ color: 0xff0000 });
-
-            // 绘制正方体及其边框
-            var cubeGeometry = new THREE.BoxGeometry(50, 50, 50);
-            var cubeMesh = new THREE.Mesh(cubeGeometry, material);
-            var cubeEdges = new THREE.EdgesGeometry(cubeGeometry, 1);
-            var cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-            cubeMesh.add(cubeLine);
-            cubeMesh.position.x = -55;
-            scene.add(cubeMesh);
         };
 
         var animation = function () {

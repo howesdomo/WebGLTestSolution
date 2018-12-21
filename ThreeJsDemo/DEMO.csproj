@@ -75,6 +75,7 @@
     <Content Include="script\WebGL.js" />
     <Content Include="TestBase.html" />
     <Content Include="TestV0.html" />
+    <Content Include="TestV0_R1.html" />
     <Content Include="TestV3.html" />
     <Content Include="TestV1.html" />
     <Content Include="TestV2.html" />
