@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>EdgesGeometry 绘制几何体及其边框</title>
     <style>
         * {
             margin: 0px;
@@ -112,7 +112,7 @@
         };
 
         var initLights = function () {
-            var lightBase = new THREE.AmbientLight(0x222222); // 环境光
+            var lightBase = new THREE.AmbientLight(0xffffff); // 环境光
             scene.add(lightBase);
             // 环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光是一种无处不在的光。
             // 环境光源放出的光线被认为来自任何方向。因此，当你仅为场景指定环境光时，所有的物体无论法向量如何，都将表现为同样的明暗程度。 （这是因为，反射光可以从各个方向进入您的眼睛）
@@ -142,23 +142,38 @@
             scene.add(axesHelper);
         };
 
+        
         var initObjects = function () {
+            let material = new THREE.MeshPhongMaterial();
+            let edgesMtl = new THREE.LineBasicMaterial({ color: 0xff0000 });
 
-            var geometry = new THREE.CylinderBufferGeometry(0, 10, 30, 4, 1);
-            var material = new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true });
+            // 绘制正方体及其边框
+            let cubeGeometry = new THREE.BoxGeometry(50, 50, 50);
+            let cubeMesh = new THREE.Mesh(cubeGeometry, material);
+            let cubeEdges = new THREE.EdgesGeometry(cubeGeometry, 1);
+            let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+            cubeMesh.add(cubeLine);
+            cubeMesh.position.x = -55;
+            scene.add(cubeMesh);
 
-            for (var i = 0; i < 500; i++) {
 
-                var mesh = new THREE.Mesh(geometry, material);
-                mesh.position.x = Math.random() * 1600 - 800;
-                mesh.position.y = 0;
-                mesh.position.z = Math.random() * 1600 - 800;
-                mesh.updateMatrix();
-                mesh.matrixAutoUpdate = false;
-                scene.add(mesh);
+            // 绘制柱体及其边框
+            let cylinderGeometry = new THREE.CylinderGeometry(25, 25, 50, 10);
+            let cylinderMesh = new THREE.Mesh(cylinderGeometry, material);
+            let cylinderEdges = new THREE.EdgesGeometry(cylinderGeometry, 1);
+            let cylinderLine = new THREE.LineSegments(cylinderEdges, edgesMtl);
+            cylinderMesh.add(cylinderLine);
+            cylinderMesh.position.x = 55;
+            scene.add(cylinderMesh);
 
-            }
 
+            // 绘制椎体及其边框
+            let coneGeometry = new THREE.ConeGeometry(25, 50);
+            let coneMesh = new THREE.Mesh(coneGeometry, material);
+            let coneEdges = new THREE.EdgesGeometry(coneGeometry, 1);
+            let coneLine = new THREE.LineSegments(coneEdges, edgesMtl);
+            coneMesh.add(coneLine);
+            scene.add(coneMesh);
         };
 
         var animation = function () {

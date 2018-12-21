@@ -147,6 +147,7 @@
             scene.add(axesHelper);
         };
 
+        var textureLoader = new THREE.TextureLoader();
         var initObjects = function () {
             initObjects_Floor();
             //initObjects_Boxes1();
@@ -216,21 +217,91 @@
         };
 
         var initObjects_One = function () {
-            var g = new THREE.CubeGeometry(1 * 10, 5 * 10, 5 * 10);
-            var m = new THREE.MeshPhongMaterial({
-                color: 0xff0000,
-                wireframe: true // wireframe 空心材质
-            });
 
-            cube = new THREE.Mesh(g, m);
-            cube.position.x = 0;
-            cube.position.y = 0;
-            cube.position.z = 0;
-            cube.updateMatrix();
+            var geometry, texture, material, mesh, edges;
 
-            scene.add(cube);
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/LightGreen.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
+                }
+            );
+
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
+            scene.add(edges);
+
+
+            mesh.position.x = 15;
+            mesh.position.y = 5;
+            mesh.position.z = 15;
+
+
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/White.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
+                }
+            );
+
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            mesh.position.x = 15;
+            mesh.position.y = 15;
+            mesh.position.z = 15;
+
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/White.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
+                }
+            );
+
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            mesh.position.x = 15;
+            mesh.position.y = 5;
+            mesh.position.z = 25;
+
+            geometry = new THREE.CubeGeometry(10, 10, 10);
+            texture = textureLoader.load(// load a resource
+                'textures/Pink.png' // resource URL
+                , undefined // onLoad callback
+                , undefined // onProgress callback currently not supported
+                , function (err) { // onError callback
+                    console.error('textureLoader.load has error:' + ex.msg);
+                }
+            );
+
+            material = new THREE.MeshBasicMaterial({ map: texture });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            mesh.position.x = 15;
+            mesh.position.y = 15;
+            mesh.position.z = 25;
+
         };
 
+        var initObjects_B = function () {
+            var geometry = new THREE.EdgesGeometry(10, 10, 10);
+            scene.add(mesh);
+        };
 
         var animation = function () {
             renderer.render(scene, camera);
