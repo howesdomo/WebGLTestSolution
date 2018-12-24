@@ -151,11 +151,10 @@
 
         var textureLoader = new THREE.TextureLoader();
         var initObjects = function () {
-            //initObjects_Floor();
+            initObjects_Floor();
             //initObjects_Step1();
             //initObjects_Locations();
-
-            initShelves();
+            //initShelves();
         };
 
         var initObjects_Floor = function () {
@@ -382,7 +381,7 @@
 
             // top & bottom
             for (var rowIndex = 1; rowIndex < shelf.rowCount; rowIndex++) {
-                // LineTop
+                // LineTopColumn
                 lineGeometry = new THREE.Geometry();
                 xStart = shelf.x * 10 + rowIndex * 10;
                 xEnd = shelf.x * 10 + rowIndex * 10;
@@ -396,15 +395,15 @@
                 lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
                 lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
 
-                var lineTop = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
+                var lineTopColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
                     color: 0xffffff, //线段的颜色
                     dashSize: dashSize, //短划线的大小
                     gapSize: gapSize //短划线之间的距离
                 }));
-                lineTop.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                scene.add(lineTop);
+                lineTopColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
+                scene.add(lineTopColumn);
 
-                // LineBottom (暂时不显示)
+                // LineBottomColumn (暂时不显示)
                 //lineGeometry = new THREE.Geometry();
                 //xStart = shelf.x * 10 + rowIndex * 10;
                 //xEnd = shelf.x * 10 + rowIndex * 10;
@@ -418,13 +417,13 @@
                 //lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
                 //lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
 
-                //var lineBottom = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
+                //var lineBottomColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
                 //    color: 0xffffff, //线段的颜色
                 //    dashSize: dashSize, //短划线的大小
                 //    gapSize: gapSize //短划线之间的距离
                 //}));
-                //lineBottom.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                //scene.add(lineBottom);
+                //lineBottomColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
+                //scene.add(lineBottomColumn);
 
                 // lineNearColumn
                 lineGeometry = new THREE.Geometry();
@@ -475,7 +474,7 @@
                 // lineTopRow
                 lineGeometry = new THREE.Geometry();
                 xStart = shelf.x * 10;
-                xEnd = shelf.x * 10 + ( 1 + shelf.columnCount ) * 10;
+                xEnd = shelf.x * 10 + shelf.rowCount * 10;
 
                 yStart = shelf.floorCount * 10;
                 yEnd = shelf.floorCount * 10;
@@ -496,27 +495,27 @@ console.log("start X,Y,Z" + xStart + "," + yStart + "," + zStart + "; end X,Y,Z"
                 lineTopRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
                 scene.add(lineTopRow);
 
-                //// lineBottomRow (暂时不显示)
-                //lineGeometry = new THREE.Geometry();
-                //xStart = shelf.x * 10;
-                //xEnd = shelf.x * 10 + (1 + shelf.columnCount) * 10;
+                // lineBottomRow (暂时不显示)
+                lineGeometry = new THREE.Geometry();
+                xStart = shelf.x * 10;
+                xEnd = shelf.x * 10 + shelf.rowCount * 10;
 
-                //yStart = 0;
-                //yEnd = 0;
+                yStart = 0;
+                yEnd = 0;
 
-                //zStart = shelf.z * 10 + columnIndex * 10;
-                //zEnd = shelf.z * 10 + columnIndex * 10;
+                zStart = shelf.z * 10 + columnIndex * 10;
+                zEnd = shelf.z * 10 + columnIndex * 10;
 
-                //lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                //lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
+                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
+                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
 
-                //var lineBottomRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                //    color: 0xffffff, //线段的颜色
-                //    dashSize: dashSize, //短划线的大小
-                //    gapSize: gapSize //短划线之间的距离
-                //}));
-                //lineBottomRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                //scene.add(lineBottomRow);
+                var lineBottomRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
+                    color: 0xffffff, //线段的颜色
+                    dashSize: dashSize, //短划线的大小
+                    gapSize: gapSize //短划线之间的距离
+                }));
+                lineBottomRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
+                scene.add(lineBottomRow);
 
                 // lineLeftColumn
                 lineGeometry = new THREE.Geometry();
@@ -542,8 +541,8 @@ console.log("start X,Y,Z" + xStart + "," + yStart + "," + zStart + "; end X,Y,Z"
 
                 // lineRightColumn
                 lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + (1 + shelf.columnCount) * 10 ;
-                xEnd = shelf.x * 10 + (1 + shelf.columnCount) * 10;
+                xStart = shelf.x * 10 + shelf.rowCount * 10 ;
+                xEnd = shelf.x * 10 + shelf.rowCount * 10;
 
                 yStart = 0;
                 yEnd = shelf.floorCount * 10;
@@ -650,8 +649,45 @@ console.log("start X,Y,Z" + xStart + "," + yStart + "," + zStart + "; end X,Y,Z"
             stats.update(); // 性能监视器(Stats)更新
         };
 
+        var btnSubmit_Click = function () {
+
+            var shelf = new Object();
+            shelf.id = document.getElementById("txtID").value;
+            shelf.rowCount = parseInt(document.getElementById("txtRow").value);
+            shelf.columnCount = parseInt(document.getElementById("txtColumn").value);
+            shelf.floorCount = parseInt(document.getElementById("txtFloor").value);
+
+            shelf.x = parseInt(document.getElementById("txtX").value); // 在哪个方格 x
+            shelf.z = parseInt(document.getElementById("txtZ").value); // 在哪个方格 z
+
+            initShelf(shelf);
+        };
+
     </script>
 </head>
 <body onload="threeStart();">
+    <div style="margin-left:100px">
+        <div>
+            层<input id="txtFloor" type="tel" value="4" />
+        </div>
+        <div>
+            格<input id="txtColumn" type="tel" value="5" />
+        </div>
+        <div>
+            行<input id="txtRow" type="tel" value="2" />
+        </div>
+        <div>
+            X<input id="txtX" type="tel" value="2" />
+        </div>
+        <div>
+            Z<input id="txtZ" type="tel" value="3" />
+        </div>
+        <div>
+            ID<input id="txtID" type="tel" value="S01" />
+        </div>
+        <div>
+            <input id="btnSubmit" type="button" value="确认" onclick="btnSubmit_Click()" />
+        </div>
+    </div>
 </body>
 </html>
