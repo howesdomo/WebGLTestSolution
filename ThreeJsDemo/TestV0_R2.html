@@ -331,7 +331,7 @@
 
                 // lineNearRow
                 lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10;
+                xStart = shelf.x * 10 ;
                 xEnd = shelf.x * 10 + shelf.rowCount * 10;
 
                 yStart = floorIndex * 10;
@@ -427,7 +427,7 @@
 
                 // lineNearColumn
                 lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + rowIndex * 10;
+                xStart = shelf.x * 10 + rowIndex *10;
                 xEnd = shelf.x * 10 + rowIndex * 10;
 
                 yStart = 0;
@@ -525,7 +525,7 @@
                 // lineLeftColumn
                 lineGeometry = new THREE.Geometry();
                 xStart = shelf.x * 10;
-                xEnd = shelf.x * 10;
+                xEnd = shelf.x * 10 ;
 
                 yStart = 0;
                 yEnd = shelf.floorCount * 10;
@@ -547,7 +547,7 @@
 
                 // lineRightColumn
                 lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + shelf.rowCount * 10;
+                xStart = shelf.x * 10 + shelf.rowCount * 10 ;
                 xEnd = shelf.x * 10 + shelf.rowCount * 10;
 
                 yStart = 0;
@@ -569,26 +569,7 @@
                 sceneAdd(lineRightColumn);
             }
 
-            // 画格子
-            for (var indexX = 0; indexX < shelf.rowCount; indexX++) {
-                for (var indexZ = 0; indexZ < shelf.columnCount; indexZ++) {
-                    for (var indexY = 0; indexY < shelf.floorCount; indexY++) {
-                        geometry = new THREE.CubeGeometry(10, 10, 10);
-                        material = new THREE.MeshPhongMaterial({
-                            color: 0x90EE90
-                            , wireframe: false // wireframe 空心材质
-                            , transparent: true
-                            , opacity: 0.7
-                        });
-                        mesh = new THREE.Mesh(geometry, material);
-                        scene.add(mesh);
 
-                        mesh.position.x = 5 + shelf.x * 10 + indexX * 10;
-                        mesh.position.y = 5 + indexY * 10;
-                        mesh.position.z = 5 + shelf.z * 10 + indexZ * 10;
-                    }
-                }
-            }
         };
 
         var initObjects_Locations = function () {

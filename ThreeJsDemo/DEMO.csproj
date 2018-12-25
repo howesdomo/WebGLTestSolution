@@ -77,6 +77,8 @@
     <Content Include="TestV0-58c6baf.html" />
     <Content Include="TestV0.html" />
     <Content Include="TestV0_R1.html" />
+    <Content Include="TestV0_R2.html" />
+    <Content Include="TestV0_R3.html" />
     <Content Include="TestV3.html" />
     <Content Include="TestV1.html" />
     <Content Include="TestV2.html" />
@@ -85,7 +87,7 @@
     <Content Include="TestV5_2.html" />
     <Content Include="TestV5_3_Stats.html" />
     <Content Include="TestV5_4_Tween.html" />
-    <Content Include="TestV6_.html" />
+    <Content Include="TestV6_OrthographicCamera_R0.html" />
     <Content Include="TestV6_OrthographicCamera.html" />
     <Content Include="TestV6_PerspectiveCamera.html" />
     <Content Include="TestV7_OrbitControls.html" />
