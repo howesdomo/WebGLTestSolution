@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html ng-app="myApp">
 <head>
     <meta charset="utf-8" />
     <title></title>
@@ -15,6 +15,7 @@
     </style>
 
     <!-- 核心js -->
+    <script src="script/angular.min.js"></script>
     <script src="script/three.js"></script>
     <script src="script/WebGL.js"></script>
     <!-- 鼠标控制Camera -->
@@ -22,10 +23,22 @@
     <!-- 性能监控器 -->
     <script src="script/Stats.js"></script>
 
+    <!-- 计算 -->
+    <script src="script/calcShelf.js"></script>
+
     <script>
+
+        var app = angular.module('myApp', []);
+
+        app.controller('myController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+            $rootScope.step_0 = 'Root Step 0';
+            $scope.step_1 = 'Root Step 1';
+            $scope.step_2 = 'Root Step 2';
+        }]);
+
         //
-        var s_Controls_MinDistance = 100;
-        var s_Controls_MaxDistance = 500;
+        var s_Controls_MinDistance = 10;
+        var s_Controls_MaxDistance = 1500;
 
         var threeStart = function () {
             if (WEBGL.isWebGLAvailable() === false) {
@@ -38,6 +51,7 @@
             initCamera();
             initControls();
             initLights();
+            initFloor();
             initGrid();
 
             initObjects();
@@ -97,10 +111,19 @@
 
         var camera;
         var initCamera = function () {
+            //// camera PerspectiveCamera
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 1000);
             camera.position.set(-100, 100, 0);
-
             camera.lookAt(150, 0, 150);
+
+            // camera OrthographicCamera
+            //camera = new THREE.OrthographicCamera(-200, 200, 105, -105, 1, 1000);
+
+            //camera.position.x = 600;
+            //camera.position.y = 600;
+            //camera.position.z = 600;
+
+            //camera.lookAt(new THREE.Vector3(130, 0, 130));
         };
 
         var controls;
@@ -115,7 +138,7 @@
             controls.minDistance = s_Controls_MinDistance;
             controls.maxDistance = s_Controls_MaxDistance;
 
-            controls.maxPolarAngle = Math.PI / 2;
+            controls.maxPolarAngle = Math.PI;
         };
 
         var initLights = function () {
@@ -123,20 +146,7 @@
             scene.add(lightBase);
             // 环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光是一种无处不在的光。
             // 环境光源放出的光线被认为来自任何方向。因此，当你仅为场景指定环境光时，所有的物体无论法向量如何，都将表现为同样的明暗程度。 （这是因为，反射光可以从各个方向进入您的眼睛）
-
-            //var light = new THREE.DirectionalLight(0xffffff);
-            //light.position.set(1, 1, 1);
-            //scene.add(light);
-
-            //var light2 = new THREE.DirectionalLight(0x002288);
-            //light2.position.set(- 1, - 1, - 1);
-            //scene.add(light2);
-
-            //var light3 = new THREE.DirectionalLight(0x442288);
-            //light3.position.set(- 1, 0, 1);
-            //scene.add(light3);
         };
-
 
         var initGrid = function () {
             var size = 10000;
@@ -154,524 +164,41 @@
             scene.add(axesHelper);
         };
 
-        var textureLoader = new THREE.TextureLoader();
-        var initObjects = function () {
-            initObjects_Floor();
-            //initObjects_Step1();
-            //initObjects_Locations();
-            //initShelves();
-        };
+        var initFloor = function () {
+            var dashSize = 1;
+            var gapSize = 2;
 
-        var initObjects_Floor = function () {
             var geometry = new THREE.Geometry();
             geometry.vertices.push(new THREE.Vector3(-150, 0, 0));
             geometry.vertices.push(new THREE.Vector3(150, 0, 0));
 
-            for (var i = 0; i <= 30; i++) {
+            for (var i = 1; i <= 30; i++) {
                 // 横线
-                var lineX = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xb97a57, opacity: 1 }));
+                var lineX = new THREE.Line(geometry, new THREE.LineDashedMaterial({ color: 0xbfbfbf, opacity: 1, dashSize: dashSize, gapSize: gapSize }));
                 lineX.position.x = 150;
                 lineX.position.z = i * 10;
                 lineX.position.y = 0;
+                lineX.computeLineDistances();
                 scene.add(lineX);
 
                 // 竖线
-                var lineZ = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xb97a57, opacity: 1 }));
+                var lineZ = new THREE.Line(geometry, new THREE.LineDashedMaterial({ color: 0xbfbfbf, opacity: 1, dashSize: dashSize, gapSize: gapSize }));
                 lineZ.position.x = i * 10;
                 lineZ.position.y = 0;
                 lineZ.position.z = 150;
                 lineZ.rotation.y = 90 * Math.PI / 180;
+                lineZ.computeLineDistances();
                 scene.add(lineZ);
             }
         };
 
-        var initObjects_Step1 = function () {
+        var initObjects = function () {
 
-            for (var i = 0; i < 2; i++) {
-                geometry = new THREE.CubeGeometry(10, 6 * 10, 6 * 10);
-                texture = textureLoader.load(// load a resource
-                    'textures/LightGreen.png' // resource URL
-                    , undefined // onLoad callback
-                    , undefined // onProgress callback currently not supported
-                    , function (err) { // onError callback
-                        console.error('textureLoader.load has error:' + ex.msg);
-                    }
-                );
-                material = new THREE.MeshBasicMaterial({ map: texture });
-                mesh = new THREE.Mesh(geometry, material);
-                edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-                edges.position.x = 15 + i * 10;
-                edges.position.y = 30;
-                edges.position.z = 30 + 20;
-                scene.add(edges);
-            }
-
-
-
-            geometry = new THREE.CubeGeometry(10, 6 * 10, 6 * 10);
-            texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
-                , undefined // onLoad callback
-                , undefined // onProgress callback currently not supported
-                , function (err) { // onError callback
-                    console.error('textureLoader.load has error:' + ex.msg);
-                }
-            );
-            material = new THREE.MeshBasicMaterial({ map: texture });
-            mesh = new THREE.Mesh(geometry, material);
-            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-            edges.position.x = 15 + 9 * 10;
-            edges.position.y = 30;
-            edges.position.z = 30 + 20;
-            scene.add(edges);
-
-            geometry = new THREE.CubeGeometry(10, 6 * 10, 6 * 10);
-            texture = textureLoader.load(// load a resource
-                'textures/LightGreen.png' // resource URL
-                , undefined // onLoad callback
-                , undefined // onProgress callback currently not supported
-                , function (err) { // onError callback
-                    console.error('textureLoader.load has error:' + ex.msg);
-                }
-            );
-            material = new THREE.MeshBasicMaterial({ map: texture });
-            mesh = new THREE.Mesh(geometry, material);
-            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-            edges.position.x = 15 + 13 * 10;
-            edges.position.y = 30;
-            edges.position.z = 30 + 20;
-            scene.add(edges);
-
-            var dashSize = 0.5;
-            var gapSize = 0.5;
-
-            var lineGeometry = new THREE.Geometry();//生成几何体
-            lineGeometry.vertices.push(new THREE.Vector3(10, 10, 20));//线段的两个顶点
-            lineGeometry.vertices.push(new THREE.Vector3(10, 10, 80));
-
-            var line = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                color: 0xffffff, //线段的颜色
-                dashSize: dashSize, //短划线的大小
-                gapSize: gapSize //短划线之间的距离
-            }));
-            line.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-            scene.add(line);
-
-
-        };
-
-        var initShelf = function (shelf) {
-            geometry = new THREE.CubeGeometry(shelf.rowCount * 10, shelf.floorCount * 10, shelf.columnCount * 10);
-            material = new THREE.MeshBasicMaterial();
-            mesh = new THREE.Mesh(geometry, material);
-            edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
-
-            edges.position.x = shelf.rowCount * 10 / 2 + shelf.x * 10;
-            edges.position.y = shelf.floorCount * 10 / 2;
-            edges.position.z = shelf.columnCount * 10 / 2 + shelf.z * 10;
-
-            // scene.add(edges);
-            sceneAdd(edges);
-
-            // 绘制虚线
-            // 5个面
-            var dashSize = 0.5;
-            var gapSize = 0.5;
-
-            var xStart, yStart, zStart, xEnd, yEnd, zEnd;
-            var lineGeometry;
-
-            for (var floorIndex = 1; floorIndex < shelf.floorCount; floorIndex++) {
-                // LineLeftRow
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10;
-                xEnd = shelf.x * 10;
-
-                yStart = floorIndex * 10;
-                yEnd = floorIndex * 10;
-
-                zStart = shelf.z * 10;
-                zEnd = shelf.z * 10 + shelf.columnCount * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart)); //线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineLeftRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineLeftRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineLeftRow);
-                sceneAdd(lineLeftRow);
-
-                // lineRightRow
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + shelf.rowCount * 10;
-                xEnd = shelf.x * 10 + shelf.rowCount * 10;
-
-                yStart = floorIndex * 10;
-                yEnd = floorIndex * 10;
-
-                zStart = shelf.z * 10;
-                zEnd = shelf.z * 10 + shelf.columnCount * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineRightRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineRightRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineRightRow);
-                sceneAdd(lineRightRow);
-
-
-                // lineNearRow
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10;
-                xEnd = shelf.x * 10 + shelf.rowCount * 10;
-
-                yStart = floorIndex * 10;
-                yEnd = floorIndex * 10;
-
-                zStart = shelf.z * 10;
-                zEnd = shelf.z * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineNearRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineNearRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineNearRow);
-                sceneAdd(lineNearRow);
-
-
-                // lineFarRow
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10;
-                xEnd = shelf.x * 10 + shelf.rowCount * 10;
-
-                yStart = floorIndex * 10;
-                yEnd = floorIndex * 10;
-
-                zStart = shelf.z * 10 + shelf.columnCount * 10;
-                zEnd = shelf.z * 10 + shelf.columnCount * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineFarRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineFarRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineFarRow);
-                sceneAdd(lineFarRow);
-
-            }
-
-            for (var rowIndex = 1; rowIndex < shelf.rowCount; rowIndex++) {
-                // LineTopColumn
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + rowIndex * 10;
-                xEnd = shelf.x * 10 + rowIndex * 10;
-
-                yStart = shelf.floorCount * 10;
-                yEnd = shelf.floorCount * 10;
-
-                zStart = shelf.z * 10;
-                zEnd = shelf.z * 10 + shelf.columnCount * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineTopColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineTopColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineTopColumn);
-                sceneAdd(lineTopColumn);
-
-
-                //// LineBottomColumn (暂时不显示)
-                //lineGeometry = new THREE.Geometry();
-                //xStart = shelf.x * 10 + rowIndex * 10;
-                //xEnd = shelf.x * 10 + rowIndex * 10;
-
-                //yStart = 0;
-                //yEnd = 0;
-
-                //zStart = shelf.z * 10;
-                //zEnd = shelf.z * 10 + shelf.columnCount * 10;
-
-                //lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                //lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                //var lineBottomColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                //    color: 0xffffff, //线段的颜色
-                //    dashSize: dashSize, //短划线的大小
-                //    gapSize: gapSize //短划线之间的距离
-                //}));
-                //lineBottomColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                //scene.add(lineBottomColumn);
-
-                // lineNearColumn
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + rowIndex * 10;
-                xEnd = shelf.x * 10 + rowIndex * 10;
-
-                yStart = 0;
-                yEnd = floorIndex * 10;
-
-                zStart = shelf.z * 10;
-                zEnd = shelf.z * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineNearColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineNearColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineNearColumn);
-                sceneAdd(lineNearColumn);
-
-
-                // lineNearColumn
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + rowIndex * 10;
-                xEnd = shelf.x * 10 + rowIndex * 10;
-
-                yStart = 0;
-                yEnd = floorIndex * 10;
-
-                zStart = shelf.z * 10 + shelf.columnCount * 10;
-                zEnd = shelf.z * 10 + shelf.columnCount * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineFarColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineFarColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineFarColumn);
-                sceneAdd(lineFarColumn);
-            }
-
-            for (var columnIndex = 1; columnIndex < shelf.columnCount; columnIndex++) {
-                // lineTopRow
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10;
-                xEnd = shelf.x * 10 + shelf.rowCount * 10;
-
-                yStart = shelf.floorCount * 10;
-                yEnd = shelf.floorCount * 10;
-
-                zStart = shelf.z * 10 + columnIndex * 10;
-                zEnd = shelf.z * 10 + columnIndex * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineTopRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineTopRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                // scene.add(lineTopRow);
-                sceneAdd(lineTopRow);
-
-
-                //// lineBottomRow (暂时不显示)
-                //lineGeometry = new THREE.Geometry();
-                //xStart = shelf.x * 10;
-                //xEnd = shelf.x * 10 + shelf.rowCount * 10;
-
-                //yStart = 0;
-                //yEnd = 0;
-
-                //zStart = shelf.z * 10 + columnIndex * 10;
-                //zEnd = shelf.z * 10 + columnIndex * 10;
-
-                //lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                //lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                //var lineBottomRow = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                //    color: 0xffffff, //线段的颜色
-                //    dashSize: dashSize, //短划线的大小
-                //    gapSize: gapSize //短划线之间的距离
-                //}));
-                //lineBottomRow.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                ////scene.add(lineBottomRow);
-                //sceneAdd(lineBottomRow);
-
-
-                // lineLeftColumn
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10;
-                xEnd = shelf.x * 10;
-
-                yStart = 0;
-                yEnd = shelf.floorCount * 10;
-
-                zStart = shelf.z * 10 + columnIndex * 10;
-                zEnd = shelf.z * 10 + columnIndex * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineLeftColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineLeftColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                //scene.add(lineLeftColumn);
-                sceneAdd(lineLeftColumn);
-
-                // lineRightColumn
-                lineGeometry = new THREE.Geometry();
-                xStart = shelf.x * 10 + shelf.rowCount * 10;
-                xEnd = shelf.x * 10 + shelf.rowCount * 10;
-
-                yStart = 0;
-                yEnd = shelf.floorCount * 10;
-
-                zStart = shelf.z * 10 + columnIndex * 10;
-                zEnd = shelf.z * 10 + columnIndex * 10;
-
-                lineGeometry.vertices.push(new THREE.Vector3(xStart, yStart, zStart));//线段的两个顶点
-                lineGeometry.vertices.push(new THREE.Vector3(xEnd, yEnd, zEnd));
-
-                var lineRightColumn = new THREE.Line(lineGeometry, new THREE.LineDashedMaterial({
-                    color: 0xffffff, //线段的颜色
-                    dashSize: dashSize, //短划线的大小
-                    gapSize: gapSize //短划线之间的距离
-                }));
-                lineRightColumn.computeLineDistances();//不可或缺的，若无，则线段不能显示为虚线
-                //scene.add(lineRightColumn);
-                sceneAdd(lineRightColumn);
-            }
-
-            // 画格子
-            for (var indexX = 0; indexX < shelf.rowCount; indexX++) {
-                for (var indexZ = 0; indexZ < shelf.columnCount; indexZ++) {
-                    for (var indexY = 0; indexY < shelf.floorCount; indexY++) {
-                        geometry = new THREE.CubeGeometry(10, 10, 10);
-                        material = new THREE.MeshPhongMaterial({
-                            color: 0x90EE90
-                            , wireframe: false // wireframe 空心材质
-                            , transparent: true
-                            , opacity: 0.7
-                        });
-                        mesh = new THREE.Mesh(geometry, material);
-                        scene.add(mesh);
-
-                        mesh.position.x = 5 + shelf.x * 10 + indexX * 10;
-                        mesh.position.y = 5 + indexY * 10;
-                        mesh.position.z = 5 + shelf.z * 10 + indexZ * 10;
-                    }
-                }
-            }
-        };
-
-        var initObjects_Locations = function () {
-
-            var geometry, texture, material, mesh, edges;
-
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0x90EE90
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.4
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
-
-                    mesh.position.x = 15;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
-                }
-            }
-
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0xFFC0CB
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.4
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
-
-                    mesh.position.x = 25;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
-                }
-            }
-
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0xFFC0CB
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.4
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
-
-                    mesh.position.x = 25 + 80;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
-                }
-            }
-
-            for (var indexZ = 0; indexZ < 6; indexZ++) {
-                for (var indexY = 0; indexY < 6; indexY++) {
-                    geometry = new THREE.CubeGeometry(10, 10, 10);
-                    material = new THREE.MeshPhongMaterial({
-                        color: 0x90EE90
-                        , wireframe: false // wireframe 空心材质
-                        , transparent: true
-                        , opacity: 0.7
-                    });
-                    mesh = new THREE.Mesh(geometry, material);
-                    scene.add(mesh);
-
-                    mesh.position.x = 25 + 120;
-                    mesh.position.y = 5 + indexY * 10;
-                    mesh.position.z = 25 + indexZ * 10;
-                }
-            }
         };
 
         var animation = function () {
             renderer.render(scene, camera);
             requestAnimationFrame(animation);
-
             // only required if controls.enableDamping = true, or if controls.autoRotate = true
             controls.update(); // 鼠标控制视觉(OrbitControls)更新
             stats.update(); // 性能监视器(Stats)更新
@@ -702,31 +229,68 @@
             btnSubmit_Click();
         };
 
+        var btnTemp_Click = function () {
+            console.log(camera);
+
+            console.log(camera.position.x);
+            console.log(camera.position.y);
+            console.log(camera.position.z);
+
+            console.log(camera.up.x);
+            console.log(camera.up.y);
+            console.log(camera.up.z);
+
+            console.log(document.getElementById("txtCamera_Position_X"));
+
+            //document.getElementById("txtCamera_Position_X").value = camera.position.x;
+            //document.getElementById("txtCamera_Position_Y").value = camera.position.y;
+            //document.getElementById("txtCamera_Position_Z").value = camera.position.z;
+
+            //document.getElementById("txtCamera_up_X").value = camera.up.x;
+            //document.getElementById("txtCamera_up_Y").value = camera.up.y;
+            //document.getElementById("txtCamera_up_Z").value = camera.up.z;
+        };
+
     </script>
 </head>
 <body onload="threeStart();">
-    <div style="margin-left:100px">
-        <div>
-            层<input id="txtFloor" type="tel" value="4" />
-        </div>
-        <div>
-            格<input id="txtColumn" type="tel" value="5" />
-        </div>
-        <div>
-            行<input id="txtRow" type="tel" value="2" />
-        </div>
-        <div>
-            X<input id="txtX" type="tel" value="2" />
-        </div>
-        <div>
-            Z<input id="txtZ" type="tel" value="3" />
-        </div>
-        <div>
-            ID<input id="txtID" type="tel" value="S01" />
-        </div>
+    <div style="position: absolute; width:200px; height:200px; left:5px; top: 60px; ">
+        <table>
+            <tbody>
+                <tr><td>层</td><td><input id="txtFloor" type="tel" value="4" /></td></tr>
+                <tr><td>格</td><td><input id="txtColumn" type="tel" value="5" /></td></tr>
+                <tr><td>行</td><td><input id="txtRow" type="tel" value="2" /></td></tr>
+                <tr><td>X</td><td><input id="txtX" type="tel" value="2" /></td></tr>
+                <tr><td>Z</td><td><input id="txtZ" type="tel" value="3" /></td></tr>
+                <tr><td>ID</td><td><input id="txtID" type="tel" value="S01" /></td></tr>
+            </tbody>
+        </table>
         <div>
             <input id="btnSubmit" type="button" value="添加" onclick="btnSubmit_Click()" />
             <input id="btnClearSubmit" type="button" value="清除后添加" onclick="btnClearSubmit_Click()" />
+        </div>
+    </div>
+    <div style="position: absolute; width:200px; height:200px; left:5px; top: 260px; ">
+        <h2>Camera</h2>
+        <span>position</span>
+        <table>
+            <tbody>
+                <tr><td>X</td><td><input id="txtCamera_position_X" type="text" value="{{camera.position.x}}" /></td></tr>
+                <tr><td>Y</td><td><input id="txtCamera_position_Y" type="text" value="{{camera.position.y}}" /></td></tr>
+                <tr><td>Z</td><td><input id="txtCamera_position_Z" type="text" value="{{camera.position.z}}" /></td></tr>
+            </tbody>
+        </table>
+        <span>up</span>
+        <table>
+            <tbody>
+                <tr><td>X</td><td><input id="txtCamera_up_X" type="text" value="{{camera.up.x}}" /></td></tr>
+                <tr><td>Y</td><td><input id="txtCamera_up_Y" type="text" value="{{camera.up.y}}" /></td></tr>
+                <tr><td>Z</td><td><input id="txtCamera_up_Z" type="text" value="{{camera.up.z}}" /></td></tr>
+            </tbody>
+        </table>
+
+        <div>
+            <input id="btnTemp" type="button" value="获取信息" onclick="btnTemp_Click()" />
         </div>
     </div>
 </body>

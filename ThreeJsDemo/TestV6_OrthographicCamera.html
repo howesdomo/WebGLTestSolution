@@ -62,18 +62,16 @@
             //camera.position.x = 600;
             //camera.position.y = 0;
             //camera.position.z = 600;
-            camera.position.set(-4, 3, 5);
-            
+            camera.position.x = -4;
+            camera.position.y = 3;
+            camera.position.z = 5;
+
 
             //camera.up.x = 0;
             //camera.up.y = 1;
             //camera.up.z = 0;
 
-            camera.lookAt({
-                x: 0,
-                y: 0,
-                z: 0
-            });
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
         }
 
         var scene;
@@ -84,25 +82,20 @@
         var light, light2;
         function initLight() {
             light = new THREE.AmbientLight(0xFF0000);
-            light.position.set(100, 100, 200);
+            light.position.set(20, 20, 20);
             scene.add(light);
 
             light2 = new THREE.PointLight(0x00FF00);
-            light2.position.set(0, 0, 300);
+            light2.position.set(-20, 20, -20);
             scene.add(light2);
         }
 
         var mesh;
         function initObject() {
-            //var geometry = new THREE.CylinderGeometry(400, 100, 400);
-            //var material = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-            //var mesh = new THREE.Mesh(geometry, material);
-            //mesh.position = new THREE.Vector3(0, 0, 0);
-            //scene.add(mesh);
 
             var cube = new THREE.Mesh(new THREE.CubeGeometry(2, 2, 2),
                 new THREE.MeshBasicMaterial({
-                    color: 0x123456,
+                    color: 0x923456,
                     wireframe: true
                 })
             );
