@@ -319,13 +319,24 @@
                     , opacity: 0.7
                 });
                 mesh = new THREE.Mesh(geometry, material);
+                mesh.Name = "S:X" + shelf.x + ";Z" + shelf.z + "|L:X" + indexX + ";Y" + indexY + ";Z" + indexZ;
 
                 mesh.position.x = 5 + shelf.x * 10 + indexX * 10;
                 mesh.position.y = 5 + indexY * 10;
                 mesh.position.z = 5 + shelf.z * 10 + indexZ * 10;
 
-                sceneAdd(mesh);
+                sceneAddLocation(mesh);
             }
         }
     }
 };
+
+// 仓库格子集合
+var objectLocations = new Array();
+
+// 添加 场景 & 仓库格子集合中
+var sceneAddLocation = function (obj) {
+    scene.add(obj);
+    objectLocations.push(obj);
+};
+

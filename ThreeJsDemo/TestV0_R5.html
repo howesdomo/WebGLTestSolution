@@ -67,10 +67,6 @@
         };
 
         var renderer; // 渲染器
-        var raycaster; // 选中目标
-        var mouse = new THREE.Vector2();
-        var INTERSECTED; // 相交
-
         var stats; // 性能监控器
         var initThree = function () {
             // 定义渲染器
@@ -100,24 +96,14 @@
 
             document.body.appendChild(stats.domElement);
 
-            // 选中目标
-            raycaster = new THREE.Raycaster();
-
             // 注册事件
             window.addEventListener('resize', onWindowResize, false); // 窗口大小改变事件
-            document.addEventListener('mousemove', onDocumentMouseMove, false); // 鼠标移动时间
         };
 
         var onWindowResize = function () { // 窗口大小改变事件
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        };
-
-        var onDocumentMouseMove = function (event) { // 鼠标移动时间
-            event.preventDefault();
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         };
 
         var scene;
@@ -328,79 +314,13 @@
         };
 
         var animation = function () {
-            requestAnimationFrame(animation, renderer.domElement);
-            render();
-
-            // renderer.render(scene, camera);
-            // requestAnimationFrame(animation);
+            renderer.render(scene, camera);
+            requestAnimationFrame(animation);
             // only required if controls.enableDamping = true, or if controls.autoRotate = true
             // mOrbitControls.update(); // 鼠标控制视觉(OrbitControls)更新
             stats.update(); // 性能监视器(Stats)更新
         };
 
-        function render() {
-
-            camera.updateMatrixWorld();
-
-            // 寻找交集 // find intersections
-            raycaster.setFromCamera(mouse, camera);
-            // var intersects = raycaster.intersectObjects(scene.children);
-            var intersects = raycaster.intersectObjects(objectLocations); // 与库位(Location)有交集时进行变色
-
-            var currentMaterialEmissive; // 记录物料材质
-            if (intersects.length > 0) { // 寻找的交集大于 0
-                var targetDistance = intersects[0].distance;
-                // ?? camera.focusAt(targetDistance); // using Cinematic camera focusAt method
-
-                if (INTERSECTED !== intersects[0].object) {
-                    if (INTERSECTED) {
-                        setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
-                    }
-
-                    INTERSECTED = intersects[0].object;
-
-                    console.log(INTERSECTED.Name);
-
-                    currentMaterialEmissive = INTERSECTED.material.emissive;
-                    INTERSECTED.currentHex = getHex(currentMaterialEmissive);
-                    setHex(currentMaterialEmissive, 0x3223ff);
-                }
-            }
-            else {
-                if (INTERSECTED) {
-                    setHex(currentMaterialEmissive, INTERSECTED.currentHex);
-                }
-                INTERSECTED = null;
-            }
-            //
-            //if (camera.postprocessing.enabled) {
-            //    camera.renderCinematic(scene, renderer);
-            //} else {
-            //    scene.overrideMaterial = null;
-            //    renderer.clear();
-            //    renderer.render(scene, camera);
-            //}
-
-            renderer.clear();
-            renderer.render(scene, camera);
-        }
-
-
-        var getHex = function (color) {
-            // if (color == undefined) { return; }
-            return (color.r * 255) << 16 ^ (color.g * 255) << 8 ^ (color.b * 255) << 0;
-        };
-
-        var setHex = function (color, hex) {
-            // if (color == undefined) { return; }
-
-            hex = Math.floor(hex);
-            color.r = (hex >> 16 & 255) / 255;
-            color.g = (hex >> 8 & 255) / 255;
-            color.b = (hex & 255) / 255;
-        };
-
-        // 仓库框与线
         var objectArray = new Array();
 
         var btnSubmit_Click = function () {
@@ -427,30 +347,39 @@
         };
 
         var effectController = {
-            // BAK
-            //focalLength: 15,
-            //filmGauge: 35,
-
-            //position_X: 105,
-            //position_Y: 18,
-            //position_Z: 180,
-
-            //lookAt_X: 110,
-            //lookAt_Y: 18,
-            //lookAt_Z: 0
-
-
-            // TEST 相交
             focalLength: 15,
             filmGauge: 35,
 
-            position_X: 50,
-            position_Y: 18,
-            position_Z: 58,
+            // jsDepthCalculation: true,
+            // shaderFocus: false,
+            //
+            fstop: 2.8,
+            // maxblur: 1.0,
+            //
+            showFocus: false,
+            focalDepth: 3,
+            // manualdof: false,
+            // vignetting: false,
+            // depthblur: false,
+            //
+            // threshold: 0.5,
+            // gain: 2.0,
+            // bias: 0.5,
+            // fringe: 0.7,
+            //
+            // focalLength: 35,
+            // noise: true,
+            // pentagon: false,
+            //
+            // dithering: 0.0001
 
-            lookAt_X: -180,
+            position_X: 105,
+            position_Y: 18,
+            position_Z: 180,
+
+            lookAt_X: 110,
             lookAt_Y: 18,
-            lookAt_Z: 60
+            lookAt_Z: 0
         };
 
         var initGUI = function () {
@@ -491,13 +420,13 @@
             //camera.postprocessing.bokeh_uniforms['zfar'].value = camera.far;
 
             //effectController['focalDepth'] = camera.postprocessing.bokeh_uniforms['focalDepth'].value;
-            // camera.setLens(effectController.focalLength, camera.frameHeight, effectController.fstop, camera.coc);
+// camera.setLens(effectController.focalLength, camera.frameHeight, effectController.fstop, camera.coc);
             // 过时
             camera.setLens
-                (
+            (
                 effectController.focalLength, // focalLength
                 effectController.filmGauge // effectController.filmGauge // camera.frameHeight // filmGauge
-                );
+            );
 
             camera.position.set(effectController.position_X, effectController.position_Y, effectController.position_Z);
 
