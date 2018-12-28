@@ -1,15 +1,29 @@
 ﻿var initShelf = function (shelf) {
-    geometry = new THREE.CubeGeometry(shelf.rowCount * 10, shelf.floorCount * 10, shelf.columnCount * 10);
-    material = new THREE.MeshBasicMaterial();
-    mesh = new THREE.Mesh(geometry, material);
-    edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转
+    //// 由于 EdgesHelper 已过时
+    //geometry = new THREE.CubeGeometry(shelf.rowCount * 10, shelf.floorCount * 10, shelf.columnCount * 10);
+    //material = new THREE.MeshBasicMaterial();
+    //mesh = new THREE.Mesh(geometry, material);
+    //edges = new THREE.EdgesHelper(mesh, 0x1535f7); //设置边框，可以旋转 // ***** 已过时 *****
 
-    edges.position.x = shelf.rowCount * 10 / 2 + shelf.x * 10;
-    edges.position.y = shelf.floorCount * 10 / 2;
-    edges.position.z = shelf.columnCount * 10 / 2 + shelf.z * 10;
+    //edges.position.x = shelf.rowCount * 10 / 2 + shelf.x * 10;
+    //edges.position.y = shelf.floorCount * 10 / 2;
+    //edges.position.z = shelf.columnCount * 10 / 2 + shelf.z * 10;
 
-    // scene.add(edges);
-    sceneAdd(edges);
+    //// scene.add(edges);
+    //sceneAdd(edges);
+
+    // 由于 EdgesHelper 已过时, 故采用以下代码进行框的绘制
+    var edgesMtl = new THREE.LineBasicMaterial({ color: 0x1535f7 });
+
+    var cubeGeometry = new THREE.BoxGeometry(shelf.rowCount * 10, shelf.floorCount * 10, shelf.columnCount * 10);
+    var cubeEdges = new THREE.EdgesGeometry(cubeGeometry, 1);
+    var cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+
+    cubeLine.position.x = shelf.rowCount * 10 / 2 + shelf.x * 10;
+    cubeLine.position.y = shelf.floorCount * 10 / 2;
+    cubeLine.position.z = shelf.columnCount * 10 / 2 + shelf.z * 10;
+
+    sceneAdd(cubeLine);
 
     // 绘制虚线
     // 5个面

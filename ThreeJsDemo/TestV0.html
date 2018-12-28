@@ -107,6 +107,7 @@
             // 注册事件
             window.addEventListener('resize', onWindowResize, false); // 窗口大小改变事件
             document.addEventListener('mousemove', onDocumentMouseMove, false); // 鼠标移动时间
+            // document.addEventListener('touchend', onTouchEnd, false); // 触控事件
         };
 
         var onWindowResize = function () { // 窗口大小改变事件
@@ -120,6 +121,16 @@
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
         };
+
+        //var onTouchEnd = function (event) {
+        //    console.log(event);
+        //    console.log(event.touches[ 0 ]);
+
+        //    alert(event.touches);
+        //    //event.preventDefault();
+        //    //mouse.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+        //    //mouse.y = - (event.touches[0].pageY / window.innerHeight) * 2 + 1;
+        //};
 
         var scene;
         var initScene = function () {
@@ -345,60 +356,41 @@
 
         var INTERSECTED; // 距离鼠标最近的一个相交的对象
 
-        $(document).ready(function () {
-            // console.log($("#txtFloor").val());
-        });
-
         var calcFirstIntersectObject = function () { // 计算距离鼠标最近的一个相交的对象
             // 寻找交集 // find intersections
             raycaster.setFromCamera(mouse, camera);
-            // var intersects = raycaster.intersectObjects(scene.children);
-            var intersects = raycaster.intersectObjects(objectLocations); // 与库位(Location)有交集时进行变色
+            // var intersects = raycaster.intersectObjects(scene.children); // 与场景内所有物体有交集时, mesh进行变色
+            var intersects = raycaster.intersectObjects(objectLocations); // 与库位(Location)有交集时, mesh进行变色
 
-            var currentMaterialEmissive; // 记录物料材质
+            
             if (intersects.length > 0) { // 寻找的交集大于 0
                 var targetDistance = intersects[0].distance;
-                // camera.focusAt(targetDistance); // using Cinematic camera focusAt method -- 报错由于方法丢失
+                // camera.focusAt(targetDistance); // using Cinematic camera focusAt method  // 由于缺少 focusAt 方法报错
+                camera.focus = targetDistance;
 
                 if (INTERSECTED !== intersects[0].object) {
                     if (INTERSECTED) {
                         setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
-                        //currentMaterialEmissive.setHex(INTERSECTED.currentHex);
                     }
 
                     INTERSECTED = intersects[0].object;
-
-                    console.log(INTERSECTED.Name);
-
-                    console.log($("#lblSelectedLocation").value);
-                    $("#lblSelectedLocation").val(INTERSECTED.Name);
-
-                    currentMaterialEmissive = INTERSECTED.material.emissive;
-                    // INTERSECTED.currentHex = getHex(currentMaterialEmissive);
+                    var currentMaterialEmissive = INTERSECTED.material.emissive;
                     INTERSECTED.currentHex = currentMaterialEmissive.getHex();
-
+                    // currentMaterialEmissive.setHex(0x3223ff); // 由于缺少 setHex 方法报错
                     setHex(currentMaterialEmissive, 0x3223ff);
-                    //currentMaterialEmissive.setHex(0x3223ff);
+
+                    $("#lblSelectedLocation").val(INTERSECTED.Name); // 将Location信息填写到input控件中
                 }
             }
             else {
                 if (INTERSECTED) {
-                    //try {
-                    //    setHex(currentMaterialEmissive, INTERSECTED.currentHex);
-                    //    //currentMaterialEmissive.setHex(INTERSECTED.currentHex);
-                    //} catch (e) {
-                    //    // Nothing TODO
-                    //}
-
-                    setHex(currentMaterialEmissive, INTERSECTED.currentHex);
+                    setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
                 }
                 INTERSECTED = null;
-                console.log('Run INTERSECTED = null');
             }
         };
 
         var setHex = function (color, hex) {
-            // if (color == undefined) { return; }
             hex = Math.floor(hex);
             color.r = (hex >> 16 & 255) / 255;
             color.g = (hex >> 8 & 255) / 255;
@@ -407,6 +399,8 @@
 
         // 仓库框与线
         var objectArray = new Array();
+        //// 仓库格子集合 // 定义在 calShelf.js 中
+        //var objectLocations = new Array();
 
         var btnSubmit_Click = function () {
 
@@ -489,11 +483,8 @@
         };
 
         var cameraArgsChanged = function () {
-            camera.setLens
-                (
-                argsCamera.focalLength, // focalLength
-                argsCamera.filmGauge // effectController.filmGauge // camera.frameHeight // filmGauge
-                );
+            camera.setFocalLength(argsCamera.focalLength);
+            camera.filmGauge = argsCamera.filmGauge;
 
             camera.position.set(argsCamera.position_X, argsCamera.position_Y, argsCamera.position_Z);
 
@@ -520,7 +511,7 @@
         </div>
     </div>
     <div style="position: absolute; width:200px; height:200px; left:5px; top: 260px; color:antiquewhite;">
-        <p>选中仓库</p>
+        <p>选中库位</p>
         <input id="lblSelectedLocation" type="text" value="" />
     </div>
 </body>
