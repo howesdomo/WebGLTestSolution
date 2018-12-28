@@ -72,6 +72,7 @@
     <Content Include="script\controls\OrbitControls.js" />
     <Content Include="script\controls\OrbitControls_Origin.js" />
     <Content Include="script\dat.gui.js" />
+    <Content Include="script\jquery.js" />
     <Content Include="script\ReadMe.txt" />
     <Content Include="script\Stats.js" />
     <Content Include="script\three.js" />
@@ -84,6 +85,7 @@
     <Content Include="TestV0_R3.html" />
     <Content Include="TestV0_R4_OrthographicCamera.html" />
     <Content Include="TestV0_R5.html" />
+    <Content Include="TestV0_R5_02.html" />
     <Content Include="TestV10_Angularjs.html" />
     <Content Include="TestV3.html" />
     <Content Include="TestV1.html" />

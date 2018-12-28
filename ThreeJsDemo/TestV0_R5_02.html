@@ -1,8 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta charset="utf-8" />
     <title></title>
     <style>
         * {
@@ -16,7 +15,7 @@
     </style>
 
     <!-- 核心js -->
-    <script src="script/jquery.js"></script>
+    <script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.js"></script>
     <script src="script/three.js"></script>
     <script src="script/WebGL.js"></script>
 
@@ -332,7 +331,7 @@
             requestAnimationFrame(animation, renderer.domElement);
 
             camera.updateMatrixWorld();
-            calcFirstIntersectObject(); // 计算距离鼠标最近的一个相交的对象
+            // calcFirstIntersectObject(); // 计算距离鼠标最近的一个相交的对象
             renderer.clear();
             renderer.render(scene, camera);
 
@@ -344,10 +343,6 @@
         };
 
         var INTERSECTED; // 距离鼠标最近的一个相交的对象
-
-        $(document).ready(function () {
-            // console.log($("#txtFloor").val());
-        });
 
         var calcFirstIntersectObject = function () { // 计算距离鼠标最近的一个相交的对象
             // 寻找交集 // find intersections
@@ -370,9 +365,6 @@
 
                     console.log(INTERSECTED.Name);
 
-                    console.log($("#lblSelectedLocation").value);
-                    $("#lblSelectedLocation").val(INTERSECTED.Name);
-
                     currentMaterialEmissive = INTERSECTED.material.emissive;
                     // INTERSECTED.currentHex = getHex(currentMaterialEmissive);
                     INTERSECTED.currentHex = currentMaterialEmissive.getHex();
@@ -383,17 +375,12 @@
             }
             else {
                 if (INTERSECTED) {
-                    //try {
-                    //    setHex(currentMaterialEmissive, INTERSECTED.currentHex);
-                    //    //currentMaterialEmissive.setHex(INTERSECTED.currentHex);
-                    //} catch (e) {
-                    //    // Nothing TODO
-                    //}
-
-                    setHex(currentMaterialEmissive, INTERSECTED.currentHex);
+                    // if (currentMaterialEmissive) {
+                        setHex(currentMaterialEmissive, INTERSECTED.currentHex);
+                    // }
+                    //currentMaterialEmissive.setHex(INTERSECTED.currentHex);
                 }
                 INTERSECTED = null;
-                console.log('Run INTERSECTED = null');
             }
         };
 
@@ -519,9 +506,35 @@
             <input id="btnClearSubmit" type="button" value="清除后添加" onclick="btnClearSubmit_Click()" />
         </div>
     </div>
-    <div style="position: absolute; width:200px; height:200px; left:5px; top: 260px; color:antiquewhite;">
-        <p>选中仓库</p>
-        <input id="lblSelectedLocation" type="text" value="" />
-    </div>
+    <!--<div style="position: absolute; width:200px; height:200px; left:5px; top: 260px; ">
+
+        <p>名字 : <input type="text" ng-model="name"></p>
+        <h1>Hello {{name}}</h1>
+
+        <h1>Hell {{constanttest}}</h1>
+        <h1>Hell {{step_2}}</h1>
+
+        <h2>Camera</h2>
+        <span>position</span>
+        <table>
+            <tbody>
+                <tr><td>X</td><td><input id="txtCamera_position_X" type="text" ng-model="camera.position.x" /></td></tr>
+                <tr><td>Y</td><td><input id="txtCamera_position_Y" type="text" ng-model="camera.position.y" /></td></tr>
+                <tr><td>Z</td><td><input id="txtCamera_position_Z" type="text" ng-model="camera.position.z" /></td></tr>
+            </tbody>
+        </table>
+        <span>up</span>
+        <table>
+            <tbody>
+                <tr><td>X</td><td><input id="txtCamera_up_X" type="text" ng-model="camera.up.x" /></td></tr>
+                <tr><td>Y</td><td><input id="txtCamera_up_Y" type="text" ng-model="camera.up.y" /></td></tr>
+                <tr><td>Z</td><td><input id="txtCamera_up_Z" type="text" ng-model="camera.up.z" /></td></tr>
+            </tbody>
+        </table>
+
+        <div>
+            <input id="btnTemp" type="button" value="获取信息" onclick="btnTemp_Click()" />
+        </div>
+    </div>-->
 </body>
 </html>
