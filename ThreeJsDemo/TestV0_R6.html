@@ -19,7 +19,6 @@
     <script src="script/jquery.js"></script>
     <script src="script/three.js"></script>
     <script src="script/WebGL.js"></script>
-    <script src="script/Tween.js"></script>
 
 
     <!-- 鼠标控制Camera -->
@@ -355,8 +354,6 @@
             renderer.clear();
             renderer.render(scene, camera);
 
-            TWEEN.update(); // 更新动画
-
             // renderer.render(scene, camera);
             // requestAnimationFrame(animation);
             // only required if controls.enableDamping = true, or if controls.autoRotate = true
@@ -390,78 +387,6 @@
                     setHex(currentMaterialEmissive, 0x3223ff);
 
                     $("#lblSelectedLocation").val(INTERSECTED.Name); // 将Location信息填写到input控件中
-
-                    //new TWEEN.Tween(INTERSECTED.position)
-                    //    .to({ x: (INTERSECTED.position.x - 10) }, 500)
-                    //    .repeat(1)
-                    //    .start();
-
-                    if (!INTERSECTED.isTweenStart || INTERSECTED.isTweenStart === false) {
-
-                        var tween1 = new TWEEN.Tween(INTERSECTED.position)
-                            .to({ x: INTERSECTED.position.x - 10 })
-                            .onStart(function () {
-                                console.log("onStart");
-                                INTERSECTED.isTweenStart = true;
-                                console.log(INTERSECTED.isTweenStart);
-                            })
-                            ;
-
-                        var tween2 = new TWEEN.Tween(INTERSECTED.position)
-                            .to({ x: INTERSECTED.position.x })
-                            .onComplete(function () {
-                                console.log("onComplete");
-                                // console.log(this);
-                                for (var i = 0; i < objectLocations.length; i++) {
-                                    if (objectLocations[i].position === this) {
-                                        console.log("!!!!!!!!");
-                                        objectLocations[i].isTweenStart = false;
-                                        break;
-                                    }
-                                }
-                            })
-                            ;
-
-                        tween1.chain(tween2);
-
-                        //var tween1 = new TWEEN.Tween(INTERSECTED)
-                        //    .to({ position: { x: INTERSECTED.position.x - 10 } }, 3000)
-                        //    .onStart(function () {
-                        //        console.log("onStart");
-                        //        this.isTweenStart = true;
-                        //        console.log(this.isTweenStart);
-                        //    })
-                        //    .onComplete(function () {
-                        //        console.log("onComplete");
-                        //        this.isTweenStart = false;
-                        //        console.log(this.isTweenStart);
-                        //    })
-                        //    ;
-
-
-                        //var tween1 = new TWEEN.Tween({
-                        //    position: INTERSECTED.position,
-                        //    target: INTERSECTED
-                        //})
-                        //    .to({ x: INTERSECTED.position.x - 10 }, 1000)
-                        //    .onStart(function () {
-                        //        console.log("onStart");
-                        //        this.target.isTweenStart = true;
-                        //        console.log(this.target.isTweenStart);
-                        //    })
-                        //    .onUpdate(function (args) {
-                        //        this.position.x = this.position.x - args;
-                        //    })                        
-                        //    .onComplete(function () {
-                        //        // this.target.position.x = INTERSECTED.position.x - 10;
-                        //        console.log("onComplete");
-                        //        this.target.isTweenStart = false;
-                        //        console.log(this.target.isTweenStart);
-                        //    })
-                        //    ;
-
-                        tween1.start();
-                    }
                 }
             }
             else {
@@ -597,6 +522,10 @@
 
         var keyUp = function (event) {
             keyboard[event.keyCode] = false;
+
+
+            console.log("X:" + camera.position.x + "; Y:" + camera.position.y + "; Z:" + camera.position.z);
+            console.log("rX:" + camera.rotation.x + "; rY:" + camera.rotation.y + "; rZ:" + camera.rotation.z);
         };
 
         var keyboardChangeCamera = function () {
@@ -623,9 +552,6 @@
             if (keyboard[39]) { // right arrow key
                 camera.rotation.y += player.turnSpeed;
             }
-
-            // console.log("X:" + camera.position.x + "; Z:" + camera.position.z);
-
         };
 
 
