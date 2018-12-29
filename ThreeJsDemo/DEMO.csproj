@@ -86,6 +86,7 @@
     <Content Include="TestV0_R4_OrthographicCamera.html" />
     <Content Include="TestV0_R5.html" />
     <Content Include="TestV0_R5_02.html" />
+    <Content Include="TestV0_R5_03.html" />
     <Content Include="TestV10_Angularjs.html" />
     <Content Include="TestV3.html" />
     <Content Include="TestV1.html" />
