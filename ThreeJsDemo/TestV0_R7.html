@@ -63,7 +63,7 @@
 
             initObjects();
 
-            initGUI(); // 暂时不使用调控面板
+            initGUI();
 
             animation();
         };
@@ -109,7 +109,7 @@
             window.addEventListener('resize', onWindowResize, false); // 窗口大小改变事件
             document.addEventListener('mousemove', onDocumentMouseMove, false); // 鼠标移动时间
             // document.addEventListener('touchend', onTouchEnd, false); // 触控事件
-            document.addEventListener('mouseup', onMouseUp, false); // 
+            document.addEventListener('mouseup', onMouseUp, false); //
 
             // 键盘控制视觉
             window.addEventListener('keydown', keyDown);
@@ -544,7 +544,7 @@
 
             var tween4 = new TWEEN.Tween(camera.position)
                 .to({ z: camera.position.z + 100 }, 2000)
-                ;        
+                ;
 
             var tween5 = new TWEEN.Tween(camera.rotation)
                 .to({ y: Math.PI * 0.5 }, 1000)
@@ -558,7 +558,7 @@
                 .to({ y: Math.PI  }, 1000)
                 ;
 
-            tween1.chain(tween2);            
+            tween1.chain(tween2);
             tween2.chain(tween3);
             tween3.chain(tween4);
             tween4.chain(tween5);
