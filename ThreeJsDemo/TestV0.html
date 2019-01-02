@@ -109,6 +109,7 @@
             window.addEventListener('resize', onWindowResize, false); // 窗口大小改变事件
             document.addEventListener('mousemove', onDocumentMouseMove, false); // 鼠标移动时间
             // document.addEventListener('touchend', onTouchEnd, false); // 触控事件
+            document.addEventListener('mouseup', onMouseUp, false); // 
 
             // 键盘控制视觉
             window.addEventListener('keydown', keyDown);
@@ -348,7 +349,7 @@
             requestAnimationFrame(animation, renderer.domElement);
 
             camera.updateMatrixWorld();
-            calcFirstIntersectObject(); // 计算距离鼠标最近的一个相交的对象
+            // calcFirstIntersectObject(); // 计算距离鼠标最近的一个相交的对象
 
             keyboardChangeCamera();
 
@@ -362,114 +363,6 @@
             // only required if controls.enableDamping = true, or if controls.autoRotate = true
             // mOrbitControls.update(); // 鼠标控制视觉(OrbitControls)更新
             stats.update(); // 性能监视器(Stats)更新
-        };
-
-        var INTERSECTED; // 距离鼠标最近的一个相交的对象
-
-        var calcFirstIntersectObject = function () { // 计算距离鼠标最近的一个相交的对象
-            // 寻找交集 // find intersections
-            raycaster.setFromCamera(mouse, camera);
-            // var intersects = raycaster.intersectObjects(scene.children); // 与场景内所有物体有交集时, mesh进行变色
-            var intersects = raycaster.intersectObjects(objectLocations); // 与库位(Location)有交集时, mesh进行变色
-
-
-            if (intersects.length > 0) { // 寻找的交集大于 0
-                var targetDistance = intersects[0].distance;
-                // camera.focusAt(targetDistance); // using Cinematic camera focusAt method  // 由于缺少 focusAt 方法报错
-                camera.focus = targetDistance;
-
-                if (INTERSECTED !== intersects[0].object) {
-                    if (INTERSECTED) {
-                        setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
-                    }
-
-                    INTERSECTED = intersects[0].object;
-                    var currentMaterialEmissive = INTERSECTED.material.emissive;
-                    INTERSECTED.currentHex = currentMaterialEmissive.getHex();
-                    // currentMaterialEmissive.setHex(0x3223ff); // 由于缺少 setHex 方法报错
-                    setHex(currentMaterialEmissive, 0x3223ff);
-
-                    $("#lblSelectedLocation").val(INTERSECTED.Name); // 将Location信息填写到input控件中
-
-                    //new TWEEN.Tween(INTERSECTED.position)
-                    //    .to({ x: (INTERSECTED.position.x - 10) }, 500)
-                    //    .repeat(1)
-                    //    .start();
-
-                    if (!INTERSECTED.isTweenStart || INTERSECTED.isTweenStart === false) {
-
-                        var tween1 = new TWEEN.Tween(INTERSECTED.position)
-                            .to({ x: INTERSECTED.position.x - 10 })
-                            .onStart(function () {
-                                console.log("onStart");
-                                INTERSECTED.isTweenStart = true;
-                                console.log(INTERSECTED.isTweenStart);
-                            })
-                            ;
-
-                        var tween2 = new TWEEN.Tween(INTERSECTED.position)
-                            .to({ x: INTERSECTED.position.x })
-                            .onComplete(function () {
-                                console.log("onComplete");
-                                // console.log(this);
-                                for (var i = 0; i < objectLocations.length; i++) {
-                                    if (objectLocations[i].position === this) {
-                                        console.log("!!!!!!!!");
-                                        objectLocations[i].isTweenStart = false;
-                                        break;
-                                    }
-                                }
-                            })
-                            ;
-
-                        tween1.chain(tween2);
-
-                        //var tween1 = new TWEEN.Tween(INTERSECTED)
-                        //    .to({ position: { x: INTERSECTED.position.x - 10 } }, 3000)
-                        //    .onStart(function () {
-                        //        console.log("onStart");
-                        //        this.isTweenStart = true;
-                        //        console.log(this.isTweenStart);
-                        //    })
-                        //    .onComplete(function () {
-                        //        console.log("onComplete");
-                        //        this.isTweenStart = false;
-                        //        console.log(this.isTweenStart);
-                        //    })
-                        //    ;
-
-
-                        //var tween1 = new TWEEN.Tween({
-                        //    position: INTERSECTED.position,
-                        //    target: INTERSECTED
-                        //})
-                        //    .to({ x: INTERSECTED.position.x - 10 }, 1000)
-                        //    .onStart(function () {
-                        //        console.log("onStart");
-                        //        this.target.isTweenStart = true;
-                        //        console.log(this.target.isTweenStart);
-                        //    })
-                        //    .onUpdate(function (args) {
-                        //        this.position.x = this.position.x - args;
-                        //    })                        
-                        //    .onComplete(function () {
-                        //        // this.target.position.x = INTERSECTED.position.x - 10;
-                        //        console.log("onComplete");
-                        //        this.target.isTweenStart = false;
-                        //        console.log(this.target.isTweenStart);
-                        //    })
-                        //    ;
-
-                        tween1.start();
-                    }
-                }
-            }
-            else {
-                if (INTERSECTED) {
-                    setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
-                }
-                INTERSECTED = null;
-            }
         };
 
         var setHex = function (color, hex) {
@@ -629,7 +522,6 @@
         };
 
         var btnGo_Click = function () {
-
             var tween1 = new TWEEN.Tween(camera.rotation)
                 .to({ y: -Math.PI * 0.5}, 1000)
                 ;
@@ -665,33 +557,85 @@
             tween5.chain(tween6);
             tween6.chain(tween7);
 
-
             tween1.start();
+        };
+
+        var onMouseUp = function () {
+            calcFirstIntersectObject();
+        };
+
+        var INTERSECTED; // 距离鼠标最近的一个相交的对象
+
+        var calcFirstIntersectObject = function () { // 计算距离鼠标最近的一个相交的对象
+            // 寻找交集 // find intersections
+            raycaster.setFromCamera(mouse, camera);
+            // var intersects = raycaster.intersectObjects(scene.children); // 与场景内所有物体有交集时, mesh进行变色
+            var intersects = raycaster.intersectObjects(objectLocations); // 与库位(Location)有交集时, mesh进行变色
 
 
-            //var from = {
-            //    x: camera.position.x,
-            //    y: camera.position.y,
-            //    z: camera.position.z
-            //};
+            if (intersects.length > 0) { // 寻找的交集大于 0
+                var targetDistance = intersects[0].distance;
+                // camera.focusAt(targetDistance); // using Cinematic camera focusAt method  // 由于缺少 focusAt 方法报错
+                camera.focus = targetDistance;
 
-            //var to = {
-            //    x: camera.position.x + 200,
-            //    y: camera.position.y,
-            //    z: camera.position.z + 200
-            //};
+                if (INTERSECTED !== intersects[0].object) {
+                    if (INTERSECTED) {
+                        setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
+                    }
 
-            //new TWEEN.Tween(from)
-            //    .to(to, 5000)
-            //    .easing(TWEEN.Easing.Linear.None)
-            //    .onUpdate(function () {
-            //        camera.position.set(this.x, this.y, this.z);
-            //        // camera.lookAt(new THREE.Vector3(0, 0, 0));
-            //    })
-            //    .onComplete(function () {
-            //        // camera.lookAt(new THREE.Vector3(0, 0, 0));
-            //    })
-            //    .start();
+                    INTERSECTED = intersects[0].object;
+                    var currentMaterialEmissive = INTERSECTED.material.emissive;
+                    INTERSECTED.currentHex = currentMaterialEmissive.getHex();
+                    // currentMaterialEmissive.setHex(0x3223ff); // 由于缺少 setHex 方法报错
+                    setHex(currentMaterialEmissive, 0x3223ff);
+
+                    $("#lblSelectedLocation").val(INTERSECTED.Name); // 将Location信息填写到input控件中
+
+                    // 箱子动画
+                    if (!INTERSECTED.isTweenStart || INTERSECTED.isTweenStart === false) {
+
+                        var start = {
+                            startX: INTERSECTED.position.x,
+                            endX: INTERSECTED.position.x - 10,
+                            target: INTERSECTED
+                        };
+
+                        var tween1 = new TWEEN.Tween(start)
+                            .to(start, 1000)
+                            .onStart(function () {
+                                this.target.isTweenStart = true;
+                            })
+                            .onUpdate(function (args) {
+                                this.target.position.x = this.target.position.x - args * 0.3;
+                            })
+                            .onComplete(function () {
+                                this.target.position.x = this.endX;
+                            })
+                            ;
+
+                        var tween2 = new TWEEN.Tween(start)
+                            .to(start, 1000)
+                            .onUpdate(function (args) {
+                                this.target.position.x = this.target.position.x + args * 0.3;
+                            })
+                            .onComplete(function () {
+                                this.target.position.x = this.startX;
+                                this.target.isTweenStart = false;
+                            })
+                            ;
+
+                        tween1.chain(tween2);
+
+                        tween1.start();
+                    }
+                }
+            }
+            else {
+                if (INTERSECTED) {
+                    setHex(INTERSECTED.material.emissive, INTERSECTED.currentHex);
+                }
+                INTERSECTED = null;
+            }
         };
 
     </script>
