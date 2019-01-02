@@ -339,6 +339,9 @@
                 mesh.position.y = 5 + indexY * 10;
                 mesh.position.z = 5 + shelf.z * 10 + indexZ * 10;
 
+                mesh.direction = shelf.direction;
+                console.log(mesh.direction);
+
                 sceneAddLocation(mesh);
             }
         }

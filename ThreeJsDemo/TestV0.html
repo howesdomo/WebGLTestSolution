@@ -252,6 +252,7 @@
             shelf.rowCount = 1;
             shelf.columnCount = 5;
             shelf.floorCount = 4;
+            shelf.direction = 'x';
 
             shelf.x = 2; // 在哪个方格 x
             shelf.z = 3; // 在哪个方格 z
@@ -267,6 +268,7 @@
 
             shelf.x = 6; // 在哪个方格 x
             shelf.z = 3; // 在哪个方格 z
+            shelf.direction = 'x';
 
             initShelf(shelf);
 
@@ -279,6 +281,7 @@
 
             shelf.x = 10; // 在哪个方格 x
             shelf.z = 3; // 在哪个方格 z
+            shelf.direction = 'x';
 
             initShelf(shelf);
 
@@ -291,6 +294,7 @@
 
             shelf.x = 14; // 在哪个方格 x
             shelf.z = 3; // 在哪个方格 z
+            shelf.direction = 'x';
 
             initShelf(shelf);
 
@@ -300,6 +304,7 @@
             shelf.rowCount = 1;
             shelf.columnCount = 5;
             shelf.floorCount = 4;
+            shelf.direction = 'x';
 
             shelf.x = 18; // 在哪个方格 x
             shelf.z = 3; // 在哪个方格 z
@@ -317,6 +322,7 @@
 
             shelf.x = 21; // 在哪个方格 x
             shelf.z = 5; // 在哪个方格 z
+            shelf.direction = 'z';
 
             initShelf(shelf);
 
@@ -329,6 +335,7 @@
 
             shelf.x = 21; // 在哪个方格 x
             shelf.z = 9; // 在哪个方格 z
+            shelf.direction = 'z';
 
             initShelf(shelf);
 
@@ -341,6 +348,7 @@
 
             shelf.x = 21; // 在哪个方格 x
             shelf.z = 13; // 在哪个方格 z
+            shelf.direction = 'z';
 
             initShelf(shelf);
         };
@@ -572,7 +580,6 @@
             // var intersects = raycaster.intersectObjects(scene.children); // 与场景内所有物体有交集时, mesh进行变色
             var intersects = raycaster.intersectObjects(objectLocations); // 与库位(Location)有交集时, mesh进行变色
 
-
             if (intersects.length > 0) { // 寻找的交集大于 0
                 var targetDistance = intersects[0].distance;
                 // camera.focusAt(targetDistance); // using Cinematic camera focusAt method  // 由于缺少 focusAt 方法报错
@@ -597,6 +604,8 @@
                         var start = {
                             startX: INTERSECTED.position.x,
                             endX: INTERSECTED.position.x - 10,
+                            startZ: INTERSECTED.position.z,
+                            endZ: INTERSECTED.position.z - 10,
                             target: INTERSECTED
                         };
 
@@ -606,20 +615,59 @@
                                 this.target.isTweenStart = true;
                             })
                             .onUpdate(function (args) {
-                                this.target.position.x = this.target.position.x - args * 0.3;
+                                console.log(this);
+                                switch (this.target.direction) {
+                                    case "x": {
+                                        this.target.position.x = this.target.position.x - args * 0.3;
+                                    }
+                                        break;
+                                    case "z": {
+                                        this.target.position.z = this.target.position.z - args * 0.3;
+                                    }
+                                        break;
+                                }
                             })
                             .onComplete(function () {
-                                this.target.position.x = this.endX;
+                                console.log("complete");
+                                console.log(this);
+                                switch (this.target.direction) {
+                                    case "x": {
+                                        this.target.position.x = this.endX;
+                                    }
+                                        break;
+                                    case "z": {
+                                        this.target.position.z = this.endZ;
+                                    }
+                                        break;
+                                }
                             })
                             ;
 
                         var tween2 = new TWEEN.Tween(start)
                             .to(start, 1000)
                             .onUpdate(function (args) {
-                                this.target.position.x = this.target.position.x + args * 0.3;
+                                switch (this.target.direction) {
+                                    case "x": {
+                                        this.target.position.x = this.target.position.x + args * 0.3;
+                                    }
+                                        break;
+                                    case "z": {
+                                        this.target.position.z = this.target.position.z + args * 0.3;
+                                    }
+                                        break;
+                                }
                             })
                             .onComplete(function () {
-                                this.target.position.x = this.startX;
+                                switch (this.target.direction) {
+                                    case "x": {
+                                        this.target.position.x = this.startX;
+                                    }
+                                        break;
+                                    case "z": {
+                                        this.target.position.z = this.startZ;
+                                    }
+                                        break;
+                                }
                                 this.target.isTweenStart = false;
                             })
                             ;
