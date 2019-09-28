@@ -69,8 +69,10 @@
     <Content Include="Demo.html" />
     <Content Include="script\angular.min.js" />
     <Content Include="script\calcShelf.js" />
+    <Content Include="script\controls\DragControls.js" />
     <Content Include="script\controls\OrbitControls.js" />
     <Content Include="script\controls\OrbitControls_Origin.js" />
+    <Content Include="script\controls\TransformControls.js" />
     <Content Include="script\dat.gui.js" />
     <Content Include="script\jquery.js" />
     <Content Include="script\ReadMe.txt" />
@@ -79,6 +81,7 @@
     <Content Include="script\Tween.js" />
     <Content Include="script\WebGL.js" />
     <Content Include="TestBase.html" />
+    <Content Include="TestRan.html" />
     <Content Include="TestV0.html" />
     <Content Include="TestV0_R1.html" />
     <Content Include="TestV0_R2.html" />
@@ -88,7 +91,10 @@
     <Content Include="TestV0_R5_02.html" />
     <Content Include="TestV0_R5_03.html" />
     <Content Include="TestV0_R6.html" />
+    <Content Include="TestV0_R7.html" />
     <Content Include="TestV10_Angularjs.html" />
+    <Content Include="TestV10_Drag_Transform.html" />
+    <Content Include="TestV10_Test.html" />
     <Content Include="TestV3.html" />
     <Content Include="TestV1.html" />
     <Content Include="TestV2.html" />

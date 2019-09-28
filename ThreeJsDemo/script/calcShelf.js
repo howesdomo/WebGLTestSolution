@@ -325,9 +325,25 @@
     for (var indexX = 0; indexX < shelf.rowCount; indexX++) {
         for (var indexZ = 0; indexZ < shelf.columnCount; indexZ++) {
             for (var indexY = 0; indexY < shelf.floorCount; indexY++) {
+
+                var randColor;
+                var rand = Math.random();
+
+                if (0 < rand && rand <= 0.2) {
+                    randColor = colorArray[0];
+                } else if (0.2 < rand && rand <= 0.4) {
+                    randColor = colorArray[1];
+                } else if (0.4 < rand && rand <= 0.6) {
+                    randColor = colorArray[2];
+                } else if (0.6 < rand && rand <= 0.8) {
+                    randColor = colorArray[3];
+                } else if (0.8 < rand && rand <= 1) {
+                    randColor = colorArray[4];
+                }
+
                 geometry = new THREE.CubeGeometry(10, 10, 10);
                 material = new THREE.MeshPhongMaterial({
-                    color: 0x90EE90
+                    color: randColor
                     , wireframe: false // wireframe 空心材质
                     , transparent: true
                     , opacity: 0.7
@@ -350,6 +366,15 @@
 
 // 仓库格子集合
 var objectLocations = new Array();
+
+var colorArray =
+    [
+        "#fecbcb",
+        "#fea5a5",
+        "#fe8080",
+        "#ff5959",
+        "#ff1a1a"
+    ];
 
 // 添加 场景 & 仓库格子集合中
 var sceneAddLocation = function (obj) {

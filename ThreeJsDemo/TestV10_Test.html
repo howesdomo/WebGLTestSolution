@@ -21,9 +21,13 @@
     <script src="script/WebGL.js"></script>
     <script src="script/Tween.js"></script>
 
-
     <!-- 鼠标控制Camera -->
     <script src="script/controls/OrbitControls.js"></script>
+
+    <!-- 拖动 & 变形 -->
+    <script src="script/controls/TransformControls.js"></script>
+    <script src="script/controls/DragControls.js"></script>
+
     <!-- 性能监控器 -->
     <script src="script/Stats.js"></script>
     <!-- 控制台 -->
@@ -57,6 +61,7 @@
             initScene();
             initCamera();
             // initOrbitControls(); // 暂时不用这个进行视觉移动
+            initDragAndTransform();
             initLights();
             initFloor();
             initGrid();
@@ -183,6 +188,54 @@
             mOrbitControls.maxDistance = s_Controls_MaxDistance;
 
             mOrbitControls.maxPolarAngle = Math.PI;
+        };
+
+        var transformControl;
+        var initDragAndTransform = function () {
+            transformControl = new THREE.TransformControls(camera, renderer.domElement);
+            transformControl.addEventListener('change', renderer);
+            transformControl.addEventListener('dragging-changed', function (event) {
+                controls.enabled = !event.value;
+            });
+            scene.add(transformControl);
+            // Hiding transform situation is a little in a mess :()
+            transformControl.addEventListener('change', function () {
+                cancelHideTransorm();
+            });
+            transformControl.addEventListener('mouseDown', function () {
+                cancelHideTransorm();
+            });
+            transformControl.addEventListener('mouseUp', function () {
+                delayHideTransform();
+            });
+            transformControl.addEventListener('objectChange', function () {
+                updateSplineOutline();
+            });
+
+            var dragcontrols = new THREE.DragControls(objectArray, camera, renderer.domElement); //
+            dragcontrols.enabled = false;
+            dragcontrols.addEventListener('hoveron', function (event) {
+                console.log('hoveron');
+                transformControl.attach(event.object);
+                cancelHideTransorm();
+            });
+            dragcontrols.addEventListener('hoveroff', function () {
+                console.log('hoveroff');
+                delayHideTransform();
+            });
+            var hiding;
+            function delayHideTransform() {
+                cancelHideTransorm();
+                hideTransform();
+            }
+            function hideTransform() {
+                hiding = setTimeout(function () {
+                    transformControl.detach(transformControl.object);
+                }, 2500);
+            }
+            function cancelHideTransorm() {
+                if (hiding) clearTimeout(hiding);
+            }
         };
 
         var initLights = function () {
@@ -531,7 +584,7 @@
 
         var btnGo_Click = function () {
             var tween1 = new TWEEN.Tween(camera.rotation)
-                .to({ y: -Math.PI * 0.5}, 1000)
+                .to({ y: -Math.PI * 0.5 }, 1000)
                 ;
 
             var tween2 = new TWEEN.Tween(camera.position)
@@ -544,7 +597,7 @@
 
             var tween4 = new TWEEN.Tween(camera.position)
                 .to({ z: camera.position.z + 100 }, 2000)
-                ;        
+                ;
 
             var tween5 = new TWEEN.Tween(camera.rotation)
                 .to({ y: Math.PI * 0.5 }, 1000)
@@ -555,10 +608,10 @@
                 ;
 
             var tween7 = new TWEEN.Tween(camera.rotation)
-                .to({ y: Math.PI  }, 1000)
+                .to({ y: Math.PI }, 1000)
                 ;
 
-            tween1.chain(tween2);            
+            tween1.chain(tween2);
             tween2.chain(tween3);
             tween3.chain(tween4);
             tween4.chain(tween5);
@@ -615,7 +668,7 @@
                                 this.target.isTweenStart = true;
                             })
                             .onUpdate(function (args) {
-                                console.log(this);
+                                // console.log(this);
                                 switch (this.target.direction) {
                                     case "x": {
                                         this.target.position.x = this.target.position.x - args * 0.3;
@@ -628,8 +681,8 @@
                                 }
                             })
                             .onComplete(function () {
-                                console.log("complete");
-                                console.log(this);
+                                // console.log("complete");
+                                // console.log(this);
                                 switch (this.target.direction) {
                                     case "x": {
                                         this.target.position.x = this.endX;
@@ -692,12 +745,17 @@
     <div style="position: absolute; width:200px; height:200px; left:5px; top: 60px; color:antiquewhite;">
         <table>
             <tbody>
-                <tr><td>层</td><td><input id="txtFloor" type="tel" value="4" /></td></tr>
+                <tr><td></td><td>--规格--</td></tr>
+                <tr><td>Name</td><td><input id="txtName" type="text" value="AA" /></td></tr>
+                <tr><td>条</td><td><input id="txtRow" type="tel" value="1" /></td></tr>
+                <tr><td>层</td><td><input id="txtFloor" type="tel" value="7" /></td></tr>
                 <tr><td>格</td><td><input id="txtColumn" type="tel" value="5" /></td></tr>
-                <tr><td>行</td><td><input id="txtRow" type="tel" value="2" /></td></tr>
+                <tr><td></td><td>--位置--</td></tr>
                 <tr><td>X</td><td><input id="txtX" type="tel" value="2" /></td></tr>
                 <tr><td>Z</td><td><input id="txtZ" type="tel" value="3" /></td></tr>
-                <tr><td>ID</td><td><input id="txtID" type="tel" value="S01" /></td></tr>
+                <tr><td></td><td>--Shelf Object--</td></tr>
+                <tr><td>UUID</td><td><label>6dc50af8-df66-4940-99f0-28634c5c4852</label></td></tr>
+                <tr><td>Name</td><td><input id="txtID" type="text" value="AA01705|2,3" readonly="readonly" /></td></tr>
             </tbody>
         </table>
         <div>
@@ -705,11 +763,11 @@
             <input id="btnClearSubmit" type="button" value="清除后添加" onclick="btnClearSubmit_Click()" />
         </div>
     </div>
-    <div style="position: absolute; width:200px; height:200px; left:5px; top: 260px; color:antiquewhite;">
+    <div style="position: absolute; width:200px; height:200px; left:5px; top: 400px; color:antiquewhite;">
         <p>选中库位</p>
         <input id="lblSelectedLocation" type="text" value="" />
     </div>
-    <div style="position: absolute; width:200px; height:200px; left:5px; top: 310px; color:antiquewhite;">
+    <div style="position: absolute; width:200px; height:200px; left:5px; top: 400px; color:antiquewhite; visibility: hidden;">
         <p>路线导航</p>
         <input id="btnGo" type="button" value="Go" onclick="btnGo_Click()" />
     </div>
